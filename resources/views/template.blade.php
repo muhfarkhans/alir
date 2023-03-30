@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="{{ asset('mazer/assets/css/main/app-dark.css') }}" />
     <link rel="shortcut icon" href="{{ asset('mazer/assets/images/logo/favicon.svg') }}" type="image/x-icon" />
     <link rel="shortcut icon" href="{{ asset('mazer/assets/images/logo/favicon.png') }}" type="image/png" />
-
     <link rel="stylesheet" href="{{ asset('mazer/assets/css/shared/iconly.css') }}" />
 </head>
 
@@ -81,6 +80,14 @@
                                 </li>
                             </ul>
                         </li>
+
+                        <li class="sidebar-item {{ request()->routeIs('citizen.*') ? 'active' : '' }}">
+                            <a href="{{ route('citizen.index') }}" class='sidebar-link'>
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Anggota</span>
+                            </a>
+                        </li>
+                        
                     </ul>
                 </div>
             </div>

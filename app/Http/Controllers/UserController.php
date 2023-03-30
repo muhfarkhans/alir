@@ -39,7 +39,6 @@ class UserController extends Controller
         } catch (\Throwable $th) {
             return redirect()->route('user.create');
         }
-
         return redirect()->route('user.index');
     }
 
