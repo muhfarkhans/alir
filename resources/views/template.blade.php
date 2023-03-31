@@ -87,6 +87,13 @@
                                 <span>Anggota</span>
                             </a>
                         </li>
+
+                        <li class="sidebar-item {{ request()->routeIs('comunity-group.*') ? 'active' : '' }}">
+                            <a href="{{ route('comunity-group.index') }}" class='sidebar-link'>
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Kelompok masyarakat</span>
+                            </a>
+                        </li>
                         
                     </ul>
                 </div>
