@@ -24,6 +24,15 @@
                     </div>
                     <div class="card-content">
                         <div class="card-body">
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             <form class="form form-horizontal" action="{{ route('user.update', $user->id) }}"
                                 method="post">
                                 @csrf
@@ -34,24 +43,15 @@
                                             <label>Nama</label>
                                             <input type="text" class="form-control form-control-lg" name="name"
                                                 value="{{ $user->name }}" placeholder="Nama" required>
-                                            @error('name')
-                                                <div class="alert alert-danger mt-1">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="mb-3 form-group">
                                             <label>Email</label>
                                             <input type="email" class="form-control form-control-lg" name="email"
                                                 value="{{ $user->email }}" required>
-                                            @error('email')
-                                                <div class="alert alert-danger mt-1">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="mb-3 form-group">
                                             <label>Password</label>
                                             <input type="password" class="form-control form-control-lg" name="password">
-                                            @error('password')
-                                                <div class="alert alert-danger mt-1">{{ $message }}</div>
-                                            @enderror
                                         </div>
                                         <div class="col-sm-12 d-flex justify-content-end">
                                             <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>

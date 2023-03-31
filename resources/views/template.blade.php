@@ -66,19 +66,12 @@
                                 <span>Dashboard</span>
                             </a>
                         </li>
-                        <li class="sidebar-item {{ request()->routeIs('user.*') ? 'active' : '' }} has-sub">
+
+                        <li class="sidebar-item {{ request()->routeIs('user.*') ? 'active' : '' }}">
                             <a href="{{ route('user.index') }}" class='sidebar-link'>
-                                <i class="bi bi-people"></i>
+                                <i class="bi bi-grid-fill"></i>
                                 <span>Pengguna</span>
                             </a>
-                            <ul class="submenu {{ request()->routeIs('user.*') ? 'active' : '' }}">
-                                <li class="submenu-item ">
-                                    <a href="{{ route('user.index') }}">Daftar</a>
-                                </li>
-                                <li class="submenu-item ">
-                                    <a href="{{ route('user.create') }}">Tambah</a>
-                                </li>
-                            </ul>
                         </li>
 
                         <li class="sidebar-item {{ request()->routeIs('citizen.*') ? 'active' : '' }}">

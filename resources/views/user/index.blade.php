@@ -19,7 +19,21 @@
         <section class="section">
             <div class="card">
                 <div class="card-header">
-                    Tabel pengguna
+                    <div class="btn-group d-flex justify-content-between">
+                        <div class="d-flex justify-content-start mt-2">
+                            Tabel pengguna
+                        </div>
+
+                        <div class="d-flex justify-content-end mb-3">
+                            <div class="mb-n3">
+                                <a href="{{ route('user.create') }}">
+                                    <button class="btn btn-primary">
+                                        Tambah data
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
