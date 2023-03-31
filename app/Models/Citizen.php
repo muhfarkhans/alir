@@ -14,7 +14,7 @@ class Citizen extends Model
         'fullname',
         'address',
         'phone',
-        'role'
+        'is_guarantor',
     ];
 
     use HasFactory;

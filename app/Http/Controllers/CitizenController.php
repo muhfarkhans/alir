@@ -9,45 +9,57 @@ use DataTables;
 
 class CitizenController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view('citizen.index');
     }
 
-    public function dataTablesCitizen(Request $request) {
+    public function dataTablesCitizen(Request $request)
+    {
         if ($request->ajax()) {
             $data = Citizen::latest()->get();
             return Datatables::of($data)
                 ->addIndexColumn()
-                ->addColumn('action', function($row){
-                    $actionBtn = '<a href="'.route('citizen.edit', ['id' => $row->id]).'" class="edit btn btn-success btn-sm">Edit</a> 
-                                  <a href="'.route('citizen.delete', ['id' => $row->id]).'" class="delete btn btn-danger btn-sm">Delete</a>';
+                ->addColumn('html_is_guarantor', function ($row) {
+                    if ($row->is_guarantor) {
+                        $badge = '<span class="badge bg-primary">Penerima</span>';
+                    } else {
+                        $badge = '<span class="badge bg-success">Penjamin</span>';
+                    }
+                    return $badge;
+                })
+                ->addColumn('action', function ($row) {
+                    $actionBtn = '<a href="' . route('citizen.edit', ['id' => $row->id]) . '" class="edit btn btn-success btn-sm">Edit</a> 
+                                  <a href="' . route('citizen.delete', ['id' => $row->id]) . '" class="delete btn btn-danger btn-sm">Delete</a>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action'])
+                ->rawColumns(['action', 'html_is_guarantor'])
                 ->make(true);
         }
     }
 
-    public function create() {
+    public function create()
+    {
         return view('citizen.create');
     }
 
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $dataCreate = [
             'nik' => $request->input('nik'),
             'fullname' => $request->input('fullname'),
             'address' => $request->input('address'),
             'phone' => $request->input('phone'),
-            'role' => $request->input('role')
+            'is_guarantor' => $request->input('is_guarantor'),
         ];
-        //return $dataCreate;
+        // return $dataCreate;
 
         Validator::make($request->all(), [
             'nik' => 'required|numeric|digits:16|unique:citizens,nik',
             'fullname' => 'required',
             'address' => 'required',
             'phone' => 'required|numeric',
-            'role' => 'required',
+            'is_guarantor' => 'required',
         ])->validate();
 
         try {
@@ -58,27 +70,29 @@ class CitizenController extends Controller
         return redirect()->route('citizen.index');
     }
 
-    public function edit($id) {
+    public function edit($id)
+    {
         $citizen = Citizen::find($id);
         return view('citizen.edit', ['citizen' => $citizen]);
     }
 
-    public function update(Request $request, $id) {
+    public function update(Request $request, $id)
+    {
         $dataUpdate = [
             'nik' => $request->input('nik'),
             'fullname' => $request->input('fullname'),
             'address' => $request->input('address'),
             'phone' => $request->input('phone'),
-            'role' => $request->input('role')
+            'is_guarantor' => $request->input('is_guarantor'),
         ];
         //return $dataCreate;
 
         Validator::make($request->all(), [
-            'nik' => 'required|numeric|digits:16|unique:citizens,nik,'.$id.',id',
+            'nik' => 'required|numeric|digits:16|unique:citizens,nik,' . $id . ',id',
             'fullname' => 'required',
             'address' => 'required',
             'phone' => 'required|numeric',
-            'role' => 'required',
+            'is_guarantor' => 'required',
         ])->validate();
 
         try {
@@ -89,7 +103,8 @@ class CitizenController extends Controller
         return redirect()->route('citizen.index');
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         try {
             Citizen::where('id', $id)->delete();
         } catch (\Throwable $th) {

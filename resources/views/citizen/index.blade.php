@@ -38,7 +38,7 @@
                                     <th>Nama lengkap</th>
                                     <th>Alamat</th>
                                     <th>Nomor telepon</th>
-                                    <th>Jabatan</th>
+                                    <th>Status</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -59,23 +59,40 @@
     <script src="{{ asset('mazer/assets/js/pages/datatables.js') }}"></script>
 
     <script type="text/javascript">
-        $(function () {
-    
+        $(function() {
+
             var table = $('.datatables').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('citizen.datatables') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                    {data: 'nik', name: 'nik'},
-                    {data: 'fullname', name: 'fullname'},
-                    {data: 'address', name: 'address'},
-                    {data: 'phone', name: 'phone'},
-                    {data: 'role', name: 'role'},
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
                     {
-                        data: 'action', 
-                        name: 'action', 
-                        orderable: true, 
+                        data: 'nik',
+                        name: 'nik'
+                    },
+                    {
+                        data: 'fullname',
+                        name: 'fullname'
+                    },
+                    {
+                        data: 'address',
+                        name: 'address'
+                    },
+                    {
+                        data: 'phone',
+                        name: 'phone'
+                    },
+                    {
+                        data: 'html_is_guarantor',
+                        name: 'html_is_guarantor'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: true,
                         searchable: true
                     },
                 ]
