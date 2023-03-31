@@ -33,7 +33,7 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form class="form form-horizontal" action="{{ route('comunity-group.update', $group->id) }}"
+                            <form class="form form-horizontal" action="{{ route('community-group.update', $group->id) }}"
                                 method="post">
                                 @csrf
                                 <input type="text" name="id" value="{{ $group->id }}" hidden required>
@@ -41,12 +41,13 @@
                                     <div class="mb-3 form-group">
                                         <label>Nama kelompok masyarakat</label>
                                         <input type="text" class="form-control form-control-lg" name="name"
-                                        placeholder="Masukkan nama kelompok masyarakat" value="{{ $group->name }}" required>
+                                            placeholder="Masukkan nama kelompok masyarakat" value="{{ $group->name }}"
+                                            required>
                                     </div>
                                     <div class="mb-3 form-group">
                                         <label>Alamat</label>
                                         <input type="text" class="form-control form-control-lg" name="address"
-                                        placeholder="Masukkan alamat" value="{{ $group->address }}" required>
+                                            placeholder="Masukkan alamat" value="{{ $group->address }}" required>
                                     </div>
                                     <div class="col-sm-12 d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>

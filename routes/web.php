@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CitizenController;
-use App\Http\Controllers\ComunityGroupController;
+use App\Http\Controllers\CommunityGroupController;
 
 Route::middleware(['auth:web'])->get('/', function () {
     return view('dashboard');
@@ -38,14 +38,14 @@ Route::middleware(['auth:web'])->name('citizen.')->prefix('citizen')->group(
     }
 );
 
-Route::middleware(['auth:web'])->name('comunity-group.')->prefix('comunity-group')->group(
+Route::middleware(['auth:web'])->name('community-group.')->prefix('community-group')->group(
     function () {
-        Route::get('/', [ComunityGroupController::class, 'index'])->name('index');
-        Route::get('/datatables', [ComunityGroupController::class, 'dataTablesComunityGroup'])->name('datatables');
-        Route::get('/create', [ComunityGroupController::class, 'create'])->name('create');
-        Route::post('/store', [ComunityGroupController::class, 'store'])->name('store');
-        Route::get('/edit/{id}', [ComunityGroupController::class, 'edit'])->name('edit');
-        Route::post('/update/{id}', [ComunityGroupController::class, 'update'])->name('update');
-        Route::get('/delete/{id}', [ComunityGroupController::class, 'delete'])->name('delete');
+        Route::get('/', [CommunityGroupController::class, 'index'])->name('index');
+        Route::get('/datatables', [CommunityGroupController::class, 'dataTablesCommunityGroup'])->name('datatables');
+        Route::get('/create', [CommunityGroupController::class, 'create'])->name('create');
+        Route::post('/store', [CommunityGroupController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [CommunityGroupController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [CommunityGroupController::class, 'update'])->name('update');
+        Route::get('/delete/{id}', [CommunityGroupController::class, 'delete'])->name('delete');
     }
 );

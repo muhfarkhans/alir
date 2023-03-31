@@ -33,18 +33,18 @@
                                     </ul>
                                 </div>
                             @endif
-                            <form class="form form-horizontal" action="{{ route('comunity-group.store') }}" method="post">
+                            <form class="form form-horizontal" action="{{ route('community-group.store') }}" method="post">
                                 @csrf
                                 <div class="form-body">
                                     <div class="mb-3 form-group">
                                         <label>Nama kelompok masyarakat</label>
                                         <input type="text" class="form-control form-control-lg" name="name"
-                                        placeholder="Masukkan nama kelompok masyarakat" required>
+                                            placeholder="Masukkan nama kelompok masyarakat" required>
                                     </div>
                                     <div class="mb-3 form-group">
                                         <label>Alamat</label>
                                         <input type="text" class="form-control form-control-lg" name="address"
-                                        placeholder="Masukkan alamat" required>
+                                            placeholder="Masukkan alamat" required>
                                     </div>
                                     <div class="col-sm-12 d-flex justify-content-end">
                                         <button type="submit" class="btn btn-primary me-1 mb-1">Submit</button>

@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ComunityGroup extends Model
+class CommunityGroup extends Model
 {
-    protected $table = 'comunity_groups';
+    protected $table = 'community_groups';
 
     protected $fillable = [
         'name',

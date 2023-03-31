@@ -19,7 +19,7 @@
 
                         <div class="d-flex justify-content-end mb-3">
                             <div class="mb-n3">
-                                <a href="{{ route('comunity-group.create') }}">
+                                <a href="{{ route('community-group.create') }}">
                                     <button class="btn btn-primary">
                                         Tambah data
                                     </button>
@@ -56,20 +56,28 @@
     <script src="{{ asset('mazer/assets/js/pages/datatables.js') }}"></script>
 
     <script type="text/javascript">
-        $(function () {
-    
+        $(function() {
+
             var table = $('.datatables').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('comunity-group.datatables') }}",
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                    {data: 'name', name: 'name'},
-                    {data: 'address', name: 'address'},
+                ajax: "{{ route('community-group.datatables') }}",
+                columns: [{
+                        data: 'DT_RowIndex',
+                        name: 'DT_RowIndex'
+                    },
                     {
-                        data: 'action', 
-                        name: 'action', 
-                        orderable: true, 
+                        data: 'name',
+                        name: 'name'
+                    },
+                    {
+                        data: 'address',
+                        name: 'address'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: true,
                         searchable: true
                     },
                 ]
