@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CitizenController;
 use App\Http\Controllers\CommunityGroupController;
+use App\Http\Controllers\CommunityMemberController;
 
 Route::middleware(['auth:web'])->get('/', function () {
     return view('dashboard');
@@ -30,6 +31,7 @@ Route::middleware(['auth:web'])->name('citizen.')->prefix('citizen')->group(
     function () {
         Route::get('/', [CitizenController::class, 'index'])->name('index');
         Route::get('/datatables', [CitizenController::class, 'dataTablesCitizen'])->name('datatables');
+        Route::get('/datachoices', [CitizenController::class, 'dataChoicesCitizen'])->name('datachoices');
         Route::get('/create', [CitizenController::class, 'create'])->name('create');
         Route::post('/store', [CitizenController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [CitizenController::class, 'edit'])->name('edit');
@@ -45,7 +47,18 @@ Route::middleware(['auth:web'])->name('community-group.')->prefix('community-gro
         Route::get('/create', [CommunityGroupController::class, 'create'])->name('create');
         Route::post('/store', [CommunityGroupController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [CommunityGroupController::class, 'edit'])->name('edit');
+        Route::get('/detail/{id}', [CommunityGroupController::class, 'detail'])->name('detail');
         Route::post('/update/{id}', [CommunityGroupController::class, 'update'])->name('update');
         Route::get('/delete/{id}', [CommunityGroupController::class, 'delete'])->name('delete');
+        Route::name('member.')->prefix('member/{community_id}')->group(
+            function () {
+                    Route::get('/datatables', [CommunityMemberController::class, 'dataTablesCommunityMember'])->name('datatables');
+                    Route::get('/create', [CommunityMemberController::class, 'create'])->name('create');
+                    Route::post('/store', [CommunityMemberController::class, 'store'])->name('store');
+                    Route::get('/edit/{id}', [CommunityMemberController::class, 'edit'])->name('edit');
+                    Route::post('/update/{id}', [CommunityMemberController::class, 'update'])->name('update');
+                    Route::get('/delete/{id}', [CommunityMemberController::class, 'delete'])->name('delete');
+                }
+        );
     }
 );

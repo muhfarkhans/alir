@@ -21,8 +21,9 @@ class CommunityGroupController extends Controller
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="' . route('community-group.edit', ['id' => $row->id]) . '" class="edit btn btn-success btn-sm">Edit</a> 
-                                  <a href="' . route('community-group.delete', ['id' => $row->id]) . '" class="delete btn btn-danger btn-sm">Delete</a>';
+                    $actionBtn = '<a href="' . route('community-group.detail', ['id' => $row->id]) . '" class="edit btn btn-primary btn-sm">Detail</a> 
+                                    <a href="' . route('community-group.edit', ['id' => $row->id]) . '" class="edit btn btn-success btn-sm">Edit</a> 
+                                    <a href="' . route('community-group.delete', ['id' => $row->id]) . '" class="delete btn btn-danger btn-sm">Delete</a>';
                     return $actionBtn;
                 })
                 ->rawColumns(['action'])
@@ -60,6 +61,12 @@ class CommunityGroupController extends Controller
     {
         $communityGroup = CommunityGroup::find($id);
         return view('community-group.edit', ['group' => $communityGroup]);
+    }
+
+    public function detail($id)
+    {
+        $communityGroup = CommunityGroup::find($id);
+        return view('community-group.detail', ['group' => $communityGroup]);
     }
 
     public function update(Request $request, $id)

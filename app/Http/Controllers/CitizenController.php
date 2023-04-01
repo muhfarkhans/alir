@@ -38,6 +38,13 @@ class CitizenController extends Controller
         }
     }
 
+    public function dataChoicesCitizen(Request $request)
+    {
+        $citizens = Citizen::latest()->get();
+
+        return response()->json($citizens);
+    }
+
     public function create()
     {
         return view('citizen.create');
