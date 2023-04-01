@@ -71,16 +71,16 @@
                                                 <label>Sebagai</label>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="is_guarantor"
-                                                        id="flexRadioDefault1" value="1"
-                                                        {{ $citizen->is_guarantor == 1 ? 'checked' : '' }}>
+                                                        id="flexRadioDefault1" value="0"
+                                                        {{ $citizen->is_guarantor == 0 ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="flexRadioDefault1">
                                                         Penerima
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="is_guarantor"
-                                                        id="flexRadioDefault2" value="0"
-                                                        {{ $citizen->is_guarantor == 0 ? 'checked' : '' }}>
+                                                        id="flexRadioDefault2" value="1"
+                                                        {{ $citizen->is_guarantor == 1 ? 'checked' : '' }}>
                                                     <label class="form-check-label" for="flexRadioDefault2">
                                                         Penjamin
                                                     </label>

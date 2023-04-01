@@ -66,14 +66,14 @@
                                                 <label>Sebagai</label>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="is_guarantor"
-                                                        id="flexRadioDefault1" value="1">
+                                                        id="flexRadioDefault1" value="0">
                                                     <label class="form-check-label" for="flexRadioDefault1">
                                                         Penerima
                                                     </label>
                                                 </div>
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="radio" name="is_guarantor"
-                                                        id="flexRadioDefault2" value="0">
+                                                        id="flexRadioDefault2" value="1">
                                                     <label class="form-check-label" for="flexRadioDefault2">
                                                         Penjamin
                                                     </label>

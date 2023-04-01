@@ -22,9 +22,9 @@ class CitizenController extends Controller
                 ->addIndexColumn()
                 ->addColumn('html_is_guarantor', function ($row) {
                     if ($row->is_guarantor) {
-                        $badge = '<span class="badge bg-primary">Penerima</span>';
+                        $badge = '<span class="badge bg-primary">Penjamin</span>';
                     } else {
-                        $badge = '<span class="badge bg-success">Penjamin</span>';
+                        $badge = '<span class="badge bg-success">Penerima</span>';
                     }
                     return $badge;
                 })
