@@ -89,6 +89,13 @@
                             </a>
                         </li>
 
+                        <li class="sidebar-item {{ request()->routeIs('cash-loan.*') ? 'active' : '' }}">
+                            <a href="{{ route('cash-loan.index') }}" class='sidebar-link'>
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Pinjaman dana</span>
+                            </a>
+                        </li>
+
                     </ul>
                 </div>
             </div>

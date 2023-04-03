@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CitizenController;
 use App\Http\Controllers\CommunityGroupController;
 use App\Http\Controllers\CommunityMemberController;
+use App\Http\Controllers\CashLoanController;
 
 Route::middleware(['auth:web'])->get('/', function () {
     return view('dashboard');
@@ -60,5 +61,17 @@ Route::middleware(['auth:web'])->name('community-group.')->prefix('community-gro
                     Route::get('/delete/{id}', [CommunityMemberController::class, 'delete'])->name('delete');
                 }
         );
+    }
+);
+
+Route::middleware(['auth:web'])->name('cash-loan.')->prefix('cash-loan')->group(
+    function () {
+        Route::get('/', [CashLoanController::class, 'index'])->name('index');
+        Route::get('/datatables', [CashLoanController::class, 'dataTablesCashLoan'])->name('datatables');
+        Route::get('/create', [CashLoanController::class, 'create'])->name('create');
+        Route::post('/store', [CashLoanController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [CashLoanController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [CashLoanController::class, 'update'])->name('update');
+        Route::get('/delete/{id}', [CashLoanController::class, 'delete'])->name('delete');
     }
 );
