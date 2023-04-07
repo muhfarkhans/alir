@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class CashLoan extends Model
 {
+    use HasFactory;
+
     protected $table = 'cash_loans';
 
     protected $fillable = [
@@ -23,5 +25,8 @@ class CashLoan extends Model
         return $this->hasOne(CommunityGroup::class, 'id', 'community_group_id');
     }
 
-    use HasFactory;
+    public function monthly_installment()
+    {
+        return $this->hasMany(MonthlyInstallment::class, 'cash_loan_id', 'id');
+    }
 }

@@ -7,6 +7,7 @@ use App\Http\Controllers\CitizenController;
 use App\Http\Controllers\CommunityGroupController;
 use App\Http\Controllers\CommunityMemberController;
 use App\Http\Controllers\CashLoanController;
+use App\Http\Controllers\MonthlyInstallmentController;
 
 Route::middleware(['auth:web'])->get('/', function () {
     return view('dashboard');
@@ -68,9 +69,13 @@ Route::middleware(['auth:web'])->name('cash-loan.')->prefix('cash-loan')->group(
     function () {
         Route::get('/', [CashLoanController::class, 'index'])->name('index');
         Route::get('/datatables', [CashLoanController::class, 'dataTablesCashLoan'])->name('datatables');
+        Route::get('/datatables-monthly/{id}', [MonthlyInstallmentController::class, 'dataTablesMonthly'])->name('datatables.monthly');
         Route::get('/create', [CashLoanController::class, 'create'])->name('create');
         Route::post('/store', [CashLoanController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [CashLoanController::class, 'edit'])->name('edit');
+        Route::get('/detail/{id}', [CashLoanController::class, 'detail'])->name('detail');
+        Route::get('/monthly', [MonthlyInstallmentController::class, 'find'])->name('monthly');
+        Route::post('/monthly/{id}', [MonthlyInstallmentController::class, 'updateAPI'])->name('monthly.update');
         Route::post('/update/{id}', [CashLoanController::class, 'update'])->name('update');
         Route::get('/delete/{id}', [CashLoanController::class, 'delete'])->name('delete');
     }

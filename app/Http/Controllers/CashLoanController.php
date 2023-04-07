@@ -2,19 +2,24 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MonthlyInstallment;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\CashLoan;
 use App\Models\CommunityGroup;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use DataTables;
 
 class CashLoanController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         return view('cash-loan.index');
     }
 
-    public function dataTablesCashLoan(Request $request) {
+    public function dataTablesCashLoan(Request $request)
+    {
         if ($request->ajax()) {
             $data = CashLoan::with(['community_group'])->latest()->get();
             return Datatables::of($data)
@@ -24,7 +29,7 @@ class CashLoanController extends Controller
                     return $period;
                 })
                 ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="' . route('cash-loan.edit', ['id' => $row->id]) . '" class="edit btn btn-success btn-sm">Edit</a> 
+                    $actionBtn = '<a href="' . route('cash-loan.detail', ['id' => $row->id]) . '" class="edit btn btn-primary btn-sm">Detail</a> 
                                   <a href="' . route('cash-loan.delete', ['id' => $row->id]) . '" class="delete btn btn-danger btn-sm">Delete</a>';
                     return $actionBtn;
                 })
@@ -53,15 +58,37 @@ class CashLoanController extends Controller
             'total_loan' => 'required|numeric',
             'loan_period' => 'required',
         ])->validate();
-        
-        $contribution = 3/100 * $request->input('total_loan');
+
+        $now = Carbon::now();
+        $loanPeriod = $request->input('loan_period');
+        $loan = $request->input('total_loan');
+        $contribution = $loan * 0.12;
+        $totalLoan = $loan + $contribution;
+
         $dataCreate['contribution'] = $contribution;
-        $totalLoan = $request->input('total_loan') + $contribution;
         $dataCreate['remaining_fund'] = $totalLoan;
-        $dataCreate['monthly_payment'] = $totalLoan / $request->input('loan_period');
+        $dataCreate['monthly_payment'] = $loan / ($loanPeriod - 4);
 
         try {
-            CashLoan::Insert($dataCreate);
+            DB::transaction(function () use ($dataCreate, $loanPeriod, $now) {
+                $cashData = CashLoan::create($dataCreate);
+                $monthly = [];
+
+                for ($i = 0; $i < $loanPeriod; $i++) {
+                    if ($i < 4)
+                        continue;
+
+                    $monthly[] = [
+                        'cash_loan_id' => $cashData->id,
+                        'principal_payment' => 0,
+                        'contribution_payment' => 0,
+                        'installment_date' => Carbon::now()->addMonths($i)->startOfMonth(),
+                        'created_at' => $now,
+                        'updated_at' => $now
+                    ];
+                }
+                MonthlyInstallment::insert($monthly);
+            });
         } catch (\Throwable $th) {
             return redirect()->route('cash-loan.create');
         }
@@ -73,6 +100,12 @@ class CashLoanController extends Controller
         $cashLoan = CashLoan::find($id);
         $communityGroup = CommunityGroup::latest()->get();
         return view('cash-loan.edit', ['group' => $communityGroup, 'loan' => $cashLoan]);
+    }
+
+    public function detail($id)
+    {
+        $cashLoan = CashLoan::with(['community_group', 'monthly_installment'])->where('id', $id)->first();
+        return view('cash-loan.detail', ['loan' => $cashLoan]);
     }
 
     public function update(Request $request, $id)
@@ -89,8 +122,8 @@ class CashLoanController extends Controller
             'total_loan' => 'required|numeric',
             'loan_period' => 'required',
         ])->validate();
-        
-        $contribution = 3/100 * $request->input('total_loan');
+
+        $contribution = $request->input('total_loan') * 0.12;
         $dataUpdate['contribution'] = $contribution;
         $totalLoan = $request->input('total_loan') + $contribution;
         $dataUpdate['remaining_fund'] = $totalLoan;
