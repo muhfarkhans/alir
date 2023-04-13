@@ -13,6 +13,8 @@ class CashLoan extends Model
 
     protected $fillable = [
         'community_group_id',
+        'acceptance_code',
+        'disbursement_date',
         'loan_period',
         'total_loan',
         'contribution',

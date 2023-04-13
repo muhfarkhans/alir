@@ -25,37 +25,79 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3">
+                            <h6>Tanggal pencairan dana</h6>
+                            <p>{{ $loan->disbursement_date }}</p>
+                        </div>
+                        <div class="col-md-3">
                             <h6>Jumlah pinjaman</h6>
-                            <p>{{ $loan->total_loan }}</p>
+                            <p>
+                                @php
+                                    $totalLoan = 'Rp'.number_format($loan->total_loan, 0, ',', '.');
+                                    echo $totalLoan;    
+                                @endphp
+                            </p>
                         </div>
                         <div class="col-md-3">
                             <h6>Jumlah Kontribusi</h6>
-                            <p>{{ $loan->contribution }}</p>
+                            <p>
+                                @php
+                                    $contribution = 'Rp'.number_format($loan->contribution, 0, ',', '.');
+                                    echo $contribution;    
+                                @endphp
+                            </p>
                         </div>
                         <div class="col-md-3">
                             <h6>Total yang harus dibayarkan</h6>
-                            <p>{{ $loan->total_loan + $loan->contribution }}</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h6>Jumlah bulan pembayaran</h6>
-                            <p>{{ $loan->loan_period }} bulan</p>
+                            <p>
+                                @php
+                                    $totalPay = $loan->total_loan + $loan->contribution;
+                                    $pay = 'Rp'.number_format($totalPay, 0, ',', '.');
+                                    echo $pay;    
+                                @endphp
+                            </p>
                         </div>
                     </div>
                     <hr>
                     <div class="row">
                         <div class="col-md-3">
+                            <h6>Jumlah bulan pembayaran</h6>
+                            <p>
+                                @php
+                                    $loanPeriod = 'Rp'.number_format($loan->loan_period, 0, ',', '.');
+                                    echo $loanPeriod . ' bulan';    
+                                @endphp
+                            </p>
+                        </div>
+                        <div class="col-md-3">
                             <h6>Tagihan pokok perbulan</h6>
-                            <p>{{ $loan->monthly_payment }}</p>
+                            <p>
+                                @php
+                                    $monthlyPayment = 'Rp'.number_format($loan->monthly_payment, 0, ',', '.');
+                                    echo $monthlyPayment;    
+                                @endphp
+                            </p>
                         </div>
                         <div class="col-md-3">
                             <h6>Tagihan kontribusi perbulan</h6>
-                            <p>{{ $loan->contribution / ($loan->loan_period - 4) }}</p>
+                            <p>
+                                @php
+                                    $monthlyContribution = $loan->contribution / ($loan->loan_period - 4);
+                                    $contribution = 'Rp'.number_format($monthlyContribution, 0, ',', '.');
+                                    echo $contribution;    
+                                @endphp
+                            </p>
                         </div>
                         <div class="col-md-3">
                             <h6>Jumlah yang sudah dibayarkan sampai bulan ini</h6>
-                            <p>{{ $loan->monthly_installment->sum('principal_payment') + $loan->monthly_installment->sum('contribution_payment') }}
+                            <p>
+                                @php
+                                    $alreadyPaid = $loan->monthly_installment->sum('principal_payment') + $loan->monthly_installment->sum('contribution_payment');
+                                    $paid = 'Rp'.number_format($alreadyPaid, 0, ',', '.');
+                                    echo $paid;    
+                                @endphp
                             </p>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -107,7 +149,14 @@
                         @csrf
                         <h5>{{ $loan->community_group->name }} <span id="mInstallmentDate"></span></h5>
                         <p>Tagihan pokok : <span>{{ $loan->monthly_payment }}</span></p>
-                        <p>Tagihan kontribusi : <span>{{ $loan->contribution }}</span></p>
+                        @if($loan->loan_period == 12)
+                            <p>Tagihan kontribusi : <span>{{ $loan->contribution/8 }}</span></p>
+                        @elseif($loan->loan_period == 24)
+                            <p>Tagihan kontribusi : <span>{{ $loan->contribution/20 }}</span></p>
+                        @elseif($loan->loan_period == 36)
+                            <p>Tagihan kontribusi : <span>{{ $loan->contribution/32 }}</span></p>
+                        @endif
+
                         <label>Pembayaran Pokok</label>
                         <input id="mId" name="id" type="text" hidden>
                         <div class="form-group">
@@ -156,19 +205,19 @@
                     },
                     {
                         data: 'cash_loan.monthly_payment',
-                        name: 'cash_loan.monthly_payment'
+                        name: 'cash_loan.monthly_payment', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
                     },
                     {
-                        data: 'cash_loan.contribution',
-                        name: 'cash_loan.contribution'
+                        data: 'monthlycontribution',
+                        name: 'monthlycontribution', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
                     },
                     {
                         data: 'principal_payment',
-                        name: 'principal_payment'
+                        name: 'principal_payment', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
                     },
                     {
                         data: 'contribution_payment',
-                        name: 'contribution_payment'
+                        name: 'contribution_payment', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
                     },
                     {
                         data: 'updated_at',

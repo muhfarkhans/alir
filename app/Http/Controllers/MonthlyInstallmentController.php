@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\MonthlyInstallment;
+use App\Models\CashLoan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use DataTables;
-
+ 
 class MonthlyInstallmentController extends Controller
 {
     public function dataTablesMonthly(Request $request, $id)
@@ -19,14 +21,24 @@ class MonthlyInstallmentController extends Controller
                     $actionBtn = '<button type="button" class="edit btn btn-success btn-sm" onclick="setFormData(' . $row->id . ')">Edit</button>';
                     return $actionBtn;
                 })
-                ->rawColumns(['action'])
+                ->addColumn('monthlycontribution', function ($row) {
+                    if($row->cash_loan->loan_period == 12) {
+                        $monthlyContibution = $row->cash_loan->contribution / 8;
+                    } elseif($row->cash_loan->loan_period == 24) {
+                        $monthlyContibution = $row->cash_loan->contribution / 20;
+                    } elseif($row->cash_loan->loan_period == 36) {
+                        $monthlyContibution = $row->cash_loan->contribution / 32;
+                    }
+                    return $monthlyContibution;
+                })
+                ->rawColumns(['action', 'monthlycontribution'])
                 ->make(true);
         }
     }
 
     public function find(Request $request)
     {
-        $monthly = MonthlyInstallment::where('id', $request->id)->first();
+        $monthly = MonthlyInstallment::where('id', $request->id)->first(); 
 
         return response()->json($monthly);
     }
@@ -44,8 +56,17 @@ class MonthlyInstallmentController extends Controller
         ])->validate();
 
         try {
-            MonthlyInstallment::where('id', $id)->update($dataUpdate);
+            DB::transaction(function () use($dataUpdate, $id) {
+                MonthlyInstallment::where('id', $id)->update($dataUpdate);
+
+                $getMonthly = MonthlyInstallment::where('id', $id)->first();
+                $getCashLoan = CashLoan::where('id', $getMonthly->cash_loan_id)->first();
+                $remainingFund = $getCashLoan->remaining_fund - ($dataUpdate['principal_payment'] + $dataUpdate['contribution_payment']);
+                $updateCashLoan = ['remaining_fund' => $remainingFund];
+                CashLoan::where('id', $getMonthly->cash_loan_id)->update($updateCashLoan);
+            });
         } catch (\Throwable $th) {
+            //throw $th;
             return false;
         }
 

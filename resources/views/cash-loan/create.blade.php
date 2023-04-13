@@ -53,6 +53,27 @@
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="mb-3 form-group">
+                                                <label>Kode penerima DPM</label>
+                                                <div class="input-group mb-3">
+                                                    <input type="numeric" class="form-control" name="acceptance_code" 
+                                                    placeholder="Masukkan kode penerimaan DPM" aria-describedby="basic-addon1" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="mb-3 form-group">
+                                                <label>Tanggal pencairan</label>
+                                                <div class="input-group mb-3">
+                                                    <input type="date" class="form-control" name="disbursement_date" 
+                                                    aria-describedby="basic-addon1" required>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="mb-3 form-group">
                                                 <label>Jumlah pinjaman</label>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text" id="basic-addon1">Rp</span>

@@ -50,6 +50,8 @@ class CashLoanController extends Controller
             'community_group_id' => $request->input('community_group_id'),
             'total_loan' => $request->input('total_loan'),
             'loan_period' => $request->input('loan_period'),
+            'acceptance_code' => $request->input('acceptance_code'),
+            'disbursement_date' => $request->input('disbursement_date'),
         ];
         // return $dataCreate;
 
@@ -57,16 +59,22 @@ class CashLoanController extends Controller
             'community_group_id' => 'required',
             'total_loan' => 'required|numeric',
             'loan_period' => 'required',
+            'acceptance_code' => 'required',
+            'disbursement_date' => 'required',
         ])->validate();
 
         $now = Carbon::now();
         $loanPeriod = $request->input('loan_period');
         $loan = $request->input('total_loan');
-        $contribution = $loan * 0.12;
+        $accCode = $request->input('acceptance_code');
+        $date = $request->input('disbursement_date');
+        $contribution = $loan * 0.12; 
         $totalLoan = $loan + $contribution;
 
         $dataCreate['contribution'] = $contribution;
         $dataCreate['remaining_fund'] = $totalLoan;
+        $dataCreate['acceptance_code'] = $accCode;
+        $dataCreate['disbursement_date'] = $date;
         $dataCreate['monthly_payment'] = $loan / ($loanPeriod - 4);
 
         try {
@@ -90,6 +98,7 @@ class CashLoanController extends Controller
                 MonthlyInstallment::insert($monthly);
             });
         } catch (\Throwable $th) {
+            //return $th;
             return redirect()->route('cash-loan.create');
         }
         return redirect()->route('cash-loan.index');
@@ -105,6 +114,7 @@ class CashLoanController extends Controller
     public function detail($id)
     {
         $cashLoan = CashLoan::with(['community_group', 'monthly_installment'])->where('id', $id)->first();
+        //return $cashLoan;
         return view('cash-loan.detail', ['loan' => $cashLoan]);
     }
 
@@ -139,7 +149,10 @@ class CashLoanController extends Controller
     public function delete($id)
     {
         try {
-            CashLoan::where('id', $id)->delete();
+            DB::transaction(function () use($id) {
+                CashLoan::where('id', $id)->delete();
+                MonthlyInstallment::where('cash_loan_id', $id)->delete();
+            });
         } catch (\Throwable $th) {
             return redirect()->route('cash-loan.index');
         }

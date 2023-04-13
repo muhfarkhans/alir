@@ -16,6 +16,8 @@ return new class extends Migration
         Schema::create('cash_loans', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('community_group_id');
+            $table->string('acceptance_code'); 
+            $table->date('disbursement_date');
             $table->unsignedDecimal('total_loan', 10, 0);
             $table->integer('loan_period');
             $table->unsignedDecimal('contribution', 10, 0);

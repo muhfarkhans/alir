@@ -41,11 +41,11 @@
                             <thead>
                                 <tr>
                                     <th>No. </th>
+                                    <th>Kode penerima DPM</th>
                                     <th>Nama kelompok</th>
                                     <th>Lama pinjaman</th>
                                     <th>Total pinjaman</th>
                                     <th>Kontribusi</th>
-                                    <th>Angsuran bulanan</th>
                                     <th>Sisa pinjaman</th>
                                     <th>Aksi</th>
                                 </tr>
@@ -77,6 +77,10 @@
                         name: 'DT_RowIndex'
                     },
                     {
+                        data: 'acceptance_code',
+                        name: 'acceptance_code'
+                    },
+                    {
                         data: 'community_group.name',
                         name: 'community_group.name'
                     },
@@ -91,10 +95,6 @@
                     {
                         data: 'contribution',
                         name: 'contribution', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
-                    },
-                    {
-                        data: 'monthly_payment',
-                        name: 'monthly_payment', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
                     },
                     {
                         data: 'remaining_fund',
