@@ -66,7 +66,7 @@ Route::middleware(['auth:web'])->name('community-group.')->prefix('community-gro
 );
 
 Route::middleware(['auth:web'])->name('cash-loan.')->prefix('cash-loan')->group(
-    function () {
+    function () { 
         Route::get('/', [CashLoanController::class, 'index'])->name('index');
         Route::get('/datatables', [CashLoanController::class, 'dataTablesCashLoan'])->name('datatables');
         Route::get('/datatables-monthly/{id}', [MonthlyInstallmentController::class, 'dataTablesMonthly'])->name('datatables.monthly');

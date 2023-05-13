@@ -36,21 +36,23 @@
                             <form class="form form-horizontal" action="{{ route('cash-loan.store') }}" method="post">
                                 @csrf
                                 <div class="form-body">
-                                    <div class="mb-3 form-group">
-                                        <label>Nama kelompok</label>
-                                        <select class="form-select" aria-label="Default select example" name="community_group_id">
-                                            <option selected disabled>-- Pilih nama kelompok --</option>
-                                            @foreach ($group as $group)
-                                                @if (old('community_group_id') == $group->id)
-                                                    <option value='{{ $group->id }}' selected>{{ $group->name }}</option>
-                                                @else
-                                                    <option value='{{ $group->id }}'>{{ $group->name }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
-                                    </div>
-
                                     <div class="row">
+                                        <div class="col-6">
+                                            <div class="mb-3 form-group">
+                                                <label>Nama kelompok</label>
+                                                <select class="form-select" aria-label="Default select example" name="community_group_id">
+                                                    <option selected disabled>-- Pilih nama kelompok --</option>
+                                                    @foreach ($group as $group)
+                                                        @if (old('community_group_id') == $group->id)
+                                                            <option value='{{ $group->id }}' selected>{{ $group->name }}</option>
+                                                        @else
+                                                            <option value='{{ $group->id }}'>{{ $group->name }}</option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>  
+
                                         <div class="col-6">
                                             <div class="mb-3 form-group">
                                                 <label>Kode penerima DPM</label>
@@ -58,6 +60,16 @@
                                                     <input type="numeric" class="form-control" name="acceptance_code" 
                                                     placeholder="Masukkan kode penerimaan DPM" aria-describedby="basic-addon1" required>
                                                 </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="mb-3 form-group">
+                                                <label>Presentase kontribusi</label>
+                                                <input type="number" class="form-control form-control-lg" name="contribution_percentage"
+                                                    placeholder="Masukkan persentase kontribusi" required>
                                             </div>
                                         </div>
                                         <div class="col-6">

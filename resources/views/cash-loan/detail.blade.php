@@ -41,8 +41,9 @@
                             <h6>Jumlah Kontribusi</h6>
                             <p>
                                 @php
-                                    $contribution = 'Rp'.number_format($loan->contribution, 0, ',', '.');
-                                    echo $contribution;    
+                                    $contribution = 'Rp'.number_format($loan->contribution, 0, ',', '.').' ('.$loan->contribution_percentage.'%'.')';
+                                    echo $contribution;
+                                    //echo $loan->contribution_percentage;    
                                 @endphp
                             </p>
                         </div>

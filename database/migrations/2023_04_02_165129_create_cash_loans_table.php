@@ -20,6 +20,7 @@ return new class extends Migration
             $table->date('disbursement_date');
             $table->unsignedDecimal('total_loan', 10, 0);
             $table->integer('loan_period');
+            $table->integer('contribution_percentage');
             $table->unsignedDecimal('contribution', 10, 0);
             $table->unsignedDecimal('monthly_payment', 10, 0);
             $table->unsignedDecimal('remaining_fund', 10, 0);

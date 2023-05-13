@@ -49,6 +49,7 @@ class CashLoanController extends Controller
         $dataCreate = [
             'community_group_id' => $request->input('community_group_id'),
             'total_loan' => $request->input('total_loan'),
+            'contribution_percentage' => $request->input('contribution_percentage'),
             'loan_period' => $request->input('loan_period'),
             'acceptance_code' => $request->input('acceptance_code'),
             'disbursement_date' => $request->input('disbursement_date'),
@@ -58,6 +59,7 @@ class CashLoanController extends Controller
         Validator::make($request->all(), [
             'community_group_id' => 'required',
             'total_loan' => 'required|numeric',
+            'contribution_percentage' => 'required|numeric',
             'loan_period' => 'required',
             'acceptance_code' => 'required',
             'disbursement_date' => 'required',
@@ -66,15 +68,16 @@ class CashLoanController extends Controller
         $now = Carbon::now();
         $loanPeriod = $request->input('loan_period');
         $loan = $request->input('total_loan');
-        $accCode = $request->input('acceptance_code');
-        $date = $request->input('disbursement_date');
-        $contribution = $loan * 0.12; 
+        $contributionPercentage = $request->input('contribution_percentage');
+        // $accCode = $request->input('acceptance_code');
+        // $date = $request->input('disbursement_date');
+        $contribution = $loan * $contributionPercentage / 100; 
         $totalLoan = $loan + $contribution;
 
         $dataCreate['contribution'] = $contribution;
         $dataCreate['remaining_fund'] = $totalLoan;
-        $dataCreate['acceptance_code'] = $accCode;
-        $dataCreate['disbursement_date'] = $date;
+        //$dataCreate['acceptance_code'] = $accCode;
+        //$dataCreate['disbursement_date'] = $date;
         $dataCreate['monthly_payment'] = $loan / ($loanPeriod - 4);
 
         try {

@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CashLoan extends Model
+class CashLoan extends Model 
 {
     use HasFactory;
 
@@ -17,6 +17,7 @@ class CashLoan extends Model
         'disbursement_date',
         'loan_period',
         'total_loan',
+        'contribution_percentage',
         'contribution',
         'monthly_payment',
         'remaining_fund',
