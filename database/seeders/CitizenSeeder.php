@@ -15,7 +15,7 @@ class CitizenSeeder extends Seeder
      */
     public function run()
     {
-        $dataUser = [
+        $data = [
             [
                 'nik' => '3404081201990001',
                 'fullname' => 'jono',
@@ -45,6 +45,6 @@ class CitizenSeeder extends Seeder
                 'is_guarantor' => 1
             ],
         ];
-        Citizen::insert($dataUser);
+        Citizen::insert($data);
     }
 }

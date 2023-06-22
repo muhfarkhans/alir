@@ -82,6 +82,13 @@
                             </a>
                         </li>
 
+                        <li class="sidebar-item {{ request()->routeIs('market.*') ? 'active' : '' }}">
+                            <a href="{{ route('market.index') }}" class='sidebar-link'>
+                                <i class="bi bi-grid-fill"></i>
+                                <span>Pasar</span>
+                            </a>
+                        </li>
+
                         <li class="sidebar-item {{ request()->routeIs('community-group.*') ? 'active' : '' }}">
                             <a href="{{ route('community-group.index') }}" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>

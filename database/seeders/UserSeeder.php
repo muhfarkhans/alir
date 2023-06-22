@@ -16,12 +16,12 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        $dataUser = [
+        $data = [
             'name' => 'admin',
             'email' => 'admin@admin.admin',
             'password' => Hash::make('password'),
         ];
 
-        User::create($dataUser);
+        User::create($data);
     }
 }

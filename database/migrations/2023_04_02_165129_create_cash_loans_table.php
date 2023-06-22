@@ -24,6 +24,7 @@ return new class extends Migration
             $table->unsignedDecimal('contribution', 10, 0);
             $table->unsignedDecimal('monthly_payment', 10, 0);
             $table->unsignedDecimal('remaining_fund', 10, 0);
+            $table->enum('loan_status', ['ongoing', 'done']);
             $table->timestamps();
 
             $table->foreign('community_group_id')->references('id')->on('community_groups')->onUpdate('cascade')->onDelete('no action');

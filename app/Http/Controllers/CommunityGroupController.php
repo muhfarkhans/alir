@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CommunityGroup;
+use App\Models\Market;
 use Illuminate\Support\Facades\Validator;
 use DataTables;
 
@@ -17,7 +18,7 @@ class CommunityGroupController extends Controller
     public function dataTablesCommunityGroup(Request $request)
     {
         if ($request->ajax()) {
-            $data = CommunityGroup::latest()->get();
+            $data = CommunityGroup::with(['market'])->latest()->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
@@ -33,7 +34,8 @@ class CommunityGroupController extends Controller
 
     public function create()
     {
-        return view('community-group.create');
+        $market = Market::get();
+        return view('community-group.create', ['market' => $market]);
     }
 
     public function store(Request $request)
@@ -41,17 +43,20 @@ class CommunityGroupController extends Controller
         $dataCreate = [
             'name' => $request->input('name'),
             'address' => $request->input('address'),
+            'market_id' => $request->input('market_id')
         ];
         //return $dataCreate;
 
         Validator::make($request->all(), [
             'name' => 'required',
             'address' => 'required',
+            'market_id' => 'required'
         ])->validate();
 
         try {
             CommunityGroup::create($dataCreate);
         } catch (\Throwable $th) {
+            //return $th;
             return redirect()->route('community-group.create');
         }
         return redirect()->route('community-group.index');
@@ -60,7 +65,8 @@ class CommunityGroupController extends Controller
     public function edit($id)
     {
         $communityGroup = CommunityGroup::find($id);
-        return view('community-group.edit', ['group' => $communityGroup]);
+        $market = Market::get();
+        return view('community-group.edit', ['group' => $communityGroup, 'market' => $market]);
     }
 
     public function detail($id)
@@ -74,12 +80,14 @@ class CommunityGroupController extends Controller
         $dataUpdate = [
             'name' => $request->input('name'),
             'address' => $request->input('address'),
+            'market_id' => $request->input('market_id'),
         ];
         //return $dataCreate;
 
         Validator::make($request->all(), [
             'name' => 'required',
             'address' => 'required',
+            'market_id' => 'required',
         ])->validate();
 
         try {

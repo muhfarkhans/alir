@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Citizen;
 use Illuminate\Support\Facades\Validator;
-use DataTables;
+use DataTables; 
 
 class CitizenController extends Controller
 {

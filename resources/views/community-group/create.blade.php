@@ -41,6 +41,21 @@
                                         <input type="text" class="form-control form-control-lg" name="name"
                                             placeholder="Masukkan nama kelompok masyarakat" required>
                                     </div>
+
+                                    <div class="mb-3 form-group">
+                                        <label>Nama pasar</label>
+                                        <select class="form-select" aria-label="Default select example" name="market_id">
+                                            <option selected disabled>-- Pilih nama pasar --</option>
+                                            @foreach ($market as $market)
+                                                @if (old('market_id') == $market->id)
+                                                    <option value='{{ $market->id }}' selected>{{ $market->name }}</option>
+                                                @else
+                                                    <option value='{{ $market->id }}'>{{ $market->name }}</option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                    </div> 
+
                                     <div class="mb-3 form-group">
                                         <label>Alamat</label>
                                         <input type="text" class="form-control form-control-lg" name="address"

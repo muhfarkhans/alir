@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CitizenController;
+use App\Http\Controllers\MarketController;
 use App\Http\Controllers\CommunityGroupController;
 use App\Http\Controllers\CommunityMemberController;
 use App\Http\Controllers\CashLoanController;
@@ -39,6 +40,18 @@ Route::middleware(['auth:web'])->name('citizen.')->prefix('citizen')->group(
         Route::get('/edit/{id}', [CitizenController::class, 'edit'])->name('edit');
         Route::post('/update/{id}', [CitizenController::class, 'update'])->name('update');
         Route::get('/delete/{id}', [CitizenController::class, 'delete'])->name('delete');
+    }
+);
+
+Route::middleware(['auth:web'])->name('market.')->prefix('market')->group(
+    function () {
+        Route::get('/', [MarketController::class, 'index'])->name('index');
+        Route::get('/datatables', [MarketController::class, 'dataTablesMarket'])->name('datatables');
+        Route::get('/create', [MarketController::class, 'create'])->name('create');
+        Route::post('/store', [MarketController::class, 'store'])->name('store');
+        Route::get('/edit/{id}', [MarketController::class, 'edit'])->name('edit');
+        Route::post('/update/{id}', [MarketController::class, 'update'])->name('update');
+        Route::get('/delete/{id}', [MarketController::class, 'delete'])->name('delete');
     }
 );
 
@@ -78,5 +91,6 @@ Route::middleware(['auth:web'])->name('cash-loan.')->prefix('cash-loan')->group(
         Route::post('/monthly/{id}', [MonthlyInstallmentController::class, 'updateAPI'])->name('monthly.update');
         Route::post('/update/{id}', [CashLoanController::class, 'update'])->name('update');
         Route::get('/delete/{id}', [CashLoanController::class, 'delete'])->name('delete');
+        Route::get('/paid-off/{id}', [CashLoanController::class, 'paidOff'])->name('paid-off');
     }
 );

@@ -20,7 +20,21 @@
             </div>
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5>Informasi pembayaran</h5>
+                    <div class="btn-group d-flex justify-content-between">
+                        <div class="d-flex justify-content-start mt-2">
+                            <h5>Informasi pembayaran</h5>
+                        </div>
+
+                        <div class="d-flex justify-content-end mb-3">
+                            <div class="mb-n3">
+                                <a href="{{ route('cash-loan.paid-off', $loan->id) }}">
+                                    <button class="btn btn-danger">
+                                        Pinjaman Lunas
+                                    </button>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="row">
@@ -64,7 +78,7 @@
                             <h6>Jumlah bulan pembayaran</h6>
                             <p>
                                 @php
-                                    $loanPeriod = 'Rp'.number_format($loan->loan_period, 0, ',', '.');
+                                    $loanPeriod = $loan->loan_period;
                                     echo $loanPeriod . ' bulan';    
                                 @endphp
                             </p>

@@ -15,20 +15,23 @@ class CommunityGroupSeeder extends Seeder
      */
     public function run()
     {
-        $dataUser = [
+        $data = [
             [
+                'market_id' => 1,
                 'name' => 'kelompok 1',
                 'address' => 'pasar baru,sleman, yogyakarta',
             ],
             [
+                'market_id' => 1,
                 'name' => 'kelompok 2',
                 'address' => 'pasar gede,bantul, yogyakarta',
             ],
             [
+                'market_id' => 3,
                 'name' => 'kelompok 3',
                 'address' => 'pasar wonosari,gunung kidul, yogyakarta',
             ],
         ];
-        CommunityGroup::insert($dataUser);
+        CommunityGroup::insert($data);
     }
 }

@@ -53,6 +53,7 @@ class CashLoanController extends Controller
             'loan_period' => $request->input('loan_period'),
             'acceptance_code' => $request->input('acceptance_code'),
             'disbursement_date' => $request->input('disbursement_date'),
+            'loan_status' => 'ongoing'
         ];
         // return $dataCreate;
 
@@ -160,5 +161,18 @@ class CashLoanController extends Controller
             return redirect()->route('cash-loan.index');
         }
         return redirect()->route('cash-loan.index');
+    }
+
+    public function paidOff ($id) {
+        $dataUpdate = [
+            'loan_status' => 'done',
+        ];
+
+        try {
+            CashLoan::where('id', $id)->update($dataUpdate);
+        } catch (\Throwable $th) {
+            return redirect()->route('cash-loan.detail', $id);
+        }
+        return redirect()->route('cash-loan.detail', $id);
     }
 }
