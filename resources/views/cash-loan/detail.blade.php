@@ -1,4 +1,9 @@
 @extends('template')
+
+@section('css')
+    <link href="{{ asset('mazer/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+@endsection
+
 @section('content')
     <div class="page-heading">
         <div class="page-title">
@@ -12,10 +17,10 @@
         <section class="section">
             <div class="card mb-3">
                 <div class="card-header">
-                    <h5>{{ $loan->community_group->name }}</h5>
+                    <h5>{{ $loan->name }}</h5>
                 </div>
                 <div class="card-body">
-                    <p>{{ $loan->community_group->address }}</p>
+                    <p>{{ $loan->address }}</p>
                 </div>
             </div>
             <div class="card mb-3">
@@ -46,28 +51,47 @@
                             <h6>Jumlah pinjaman</h6>
                             <p>
                                 @php
-                                    $totalLoan = 'Rp'.number_format($loan->total_loan, 0, ',', '.');
-                                    echo $totalLoan;    
+                                    $totalLoan = 'Rp' . number_format($loan->total_loan, 0, ',', '.');
+                                    echo $totalLoan;
                                 @endphp
                             </p>
                         </div>
                         <div class="col-md-3">
-                            <h6>Jumlah Kontribusi</h6>
+                            @php
+                                $contribution = 'Rp' . number_format($loan->contribution, 0, ',', '.');
+                                $contribution_tolerance = 'Rp' . number_format($loan->contribution_tolerance, 0, ',', '.');
+                                $contribution_percentage = ' (' . $loan->contribution_percentage . '%' . ')';
+                                $now = Carbon\Carbon::now();
+                                $tolerance_month = Carbon\Carbon::parse($loan->disbursement_date)->addMonth(10);
+                                $tolerance = false;
+                                if ($now->lte($tolerance_month)) {
+                                    $tolerance = true;
+                                }
+                            @endphp
+                            <h6>Jumlah Kontribusi
+                                <a href="#" class="text-warning" data-bs-toggle="tooltip"
+                                    title="Apabila melakukan pelunasan dalam 10 bulan maka tidak perlu membayar kontribusi bulan selanjutnya. jumlah kontribusi sebenarnya adalah {{ $contribution . ' ' . $contribution_percentage }}">***</a>
+                            </h6>
                             <p>
                                 @php
-                                    $contribution = 'Rp'.number_format($loan->contribution, 0, ',', '.').' ('.$loan->contribution_percentage.'%'.')';
-                                    echo $contribution;
-                                    //echo $loan->contribution_percentage;    
+                                    echo $tolerance ? $contribution_tolerance : $contribution;
                                 @endphp
                             </p>
                         </div>
                         <div class="col-md-3">
-                            <h6>Total yang harus dibayarkan</h6>
+                            @php
+                                $totalPay = $loan->total_loan + $loan->contribution;
+                                $totalPayTolerance = $loan->total_loan + $loan->contribution_tolerance;
+                                $pay = 'Rp' . number_format($totalPay, 0, ',', '.');
+                                $pay_tolerance = 'Rp' . number_format($totalPayTolerance, 0, ',', '.');
+                            @endphp
+                            <h6>Total harus dibayarkan
+                                <a href="#" class="text-warning" data-bs-toggle="tooltip"
+                                    title="Apabila melakukan pelunasan dalam 10 bulan maka tidak perlu membayar kontribusi bulan selanjutnya. total harus dibayarkan sebenarnya adalah {{ $pay }}">***</a>
+                            </h6>
                             <p>
                                 @php
-                                    $totalPay = $loan->total_loan + $loan->contribution;
-                                    $pay = 'Rp'.number_format($totalPay, 0, ',', '.');
-                                    echo $pay;    
+                                    echo $tolerance ? $pay_tolerance : $pay;
                                 @endphp
                             </p>
                         </div>
@@ -79,7 +103,7 @@
                             <p>
                                 @php
                                     $loanPeriod = $loan->loan_period;
-                                    echo $loanPeriod . ' bulan';    
+                                    echo $loanPeriod . ' bulan';
                                 @endphp
                             </p>
                         </div>
@@ -87,8 +111,8 @@
                             <h6>Tagihan pokok perbulan</h6>
                             <p>
                                 @php
-                                    $monthlyPayment = 'Rp'.number_format($loan->monthly_payment, 0, ',', '.');
-                                    echo $monthlyPayment;    
+                                    $monthlyPayment = 'Rp' . number_format($loan->total_loan / ($loan->loan_period - 4), 0, ',', '.');
+                                    echo $monthlyPayment;
                                 @endphp
                             </p>
                         </div>
@@ -97,8 +121,8 @@
                             <p>
                                 @php
                                     $monthlyContribution = $loan->contribution / ($loan->loan_period - 4);
-                                    $contribution = 'Rp'.number_format($monthlyContribution, 0, ',', '.');
-                                    echo $contribution;    
+                                    $contribution = 'Rp' . number_format($monthlyContribution, 0, ',', '.');
+                                    echo $contribution;
                                 @endphp
                             </p>
                         </div>
@@ -107,8 +131,8 @@
                             <p>
                                 @php
                                     $alreadyPaid = $loan->monthly_installment->sum('principal_payment') + $loan->monthly_installment->sum('contribution_payment');
-                                    $paid = 'Rp'.number_format($alreadyPaid, 0, ',', '.');
-                                    echo $paid;    
+                                    $paid = 'Rp' . number_format($alreadyPaid, 0, ',', '.');
+                                    echo $paid;
                                 @endphp
                             </p>
                         </div>
@@ -162,14 +186,14 @@
                 <form id="monthlyForm">
                     <div class="modal-body">
                         @csrf
-                        <h5>{{ $loan->community_group->name }} <span id="mInstallmentDate"></span></h5>
+                        <h5>{{ $loan->name }} <span id="mInstallmentDate"></span></h5>
                         <p>Tagihan pokok : <span>{{ $loan->monthly_payment }}</span></p>
-                        @if($loan->loan_period == 12)
-                            <p>Tagihan kontribusi : <span>{{ $loan->contribution/8 }}</span></p>
+                        @if ($loan->loan_period == 12)
+                            <p>Tagihan kontribusi : <span>{{ $loan->contribution / 8 }}</span></p>
                         @elseif($loan->loan_period == 24)
-                            <p>Tagihan kontribusi : <span>{{ $loan->contribution/20 }}</span></p>
+                            <p>Tagihan kontribusi : <span>{{ $loan->contribution / 20 }}</span></p>
                         @elseif($loan->loan_period == 36)
-                            <p>Tagihan kontribusi : <span>{{ $loan->contribution/32 }}</span></p>
+                            <p>Tagihan kontribusi : <span>{{ $loan->contribution / 32 }}</span></p>
                         @endif
 
                         <label>Pembayaran Pokok</label>
@@ -219,20 +243,24 @@
                         name: 'installment_date'
                     },
                     {
-                        data: 'cash_loan.monthly_payment',
-                        name: 'cash_loan.monthly_payment', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
+                        data: 'monthly_payment',
+                        name: 'monthly_payment',
+                        render: $.fn.dataTable.render.number(',', '.', 0, 'Rp')
                     },
                     {
                         data: 'monthlycontribution',
-                        name: 'monthlycontribution', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
+                        name: 'monthlycontribution',
+                        render: $.fn.dataTable.render.number(',', '.', 0, 'Rp')
                     },
                     {
                         data: 'principal_payment',
-                        name: 'principal_payment', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
+                        name: 'principal_payment',
+                        render: $.fn.dataTable.render.number(',', '.', 0, 'Rp')
                     },
                     {
                         data: 'contribution_payment',
-                        name: 'contribution_payment', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
+                        name: 'contribution_payment',
+                        render: $.fn.dataTable.render.number(',', '.', 0, 'Rp')
                     },
                     {
                         data: 'updated_at',

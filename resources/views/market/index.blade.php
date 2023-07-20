@@ -1,4 +1,9 @@
 @extends('template')
+
+@section('css')
+    <link href="{{ asset('mazer/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+@endsection
+
 @section('content')
     <div class="page-heading">
         <div class="page-title">

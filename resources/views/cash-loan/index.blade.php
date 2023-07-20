@@ -1,10 +1,15 @@
 @extends('template')
+
+@section('css')
+    <link href="{{ asset('mazer/assets/extensions/datatables.net-bs5/css/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
+@endsection
+
 @section('content')
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
-                    <h3>Pinaman dana</h3>
+                    <h3>Pinjaman dana</h3>
                     <p class="text-subtitle text-muted">daftar pinjaman dana</p>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
@@ -46,7 +51,6 @@
                                     <th>Lama pinjaman</th>
                                     <th>Total pinjaman</th>
                                     <th>Kontribusi</th>
-                                    <th>Sisa pinjaman</th>
                                     <th>Aksi</th>
                                 </tr>
                             </thead>
@@ -77,12 +81,12 @@
                         name: 'DT_RowIndex'
                     },
                     {
-                        data: 'acceptance_code',
-                        name: 'acceptance_code'
+                        data: 'code_dpm',
+                        name: 'code_dpm'
                     },
                     {
-                        data: 'community_group.name',
-                        name: 'community_group.name'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
                         data: 'loan-period',
@@ -90,15 +94,13 @@
                     },
                     {
                         data: 'total_loan',
-                        name: 'total_loan', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
+                        name: 'total_loan',
+                        render: $.fn.dataTable.render.number(',', '.', 0, 'Rp')
                     },
                     {
                         data: 'contribution',
-                        name: 'contribution', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
-                    },
-                    {
-                        data: 'remaining_fund',
-                        name: 'remaining_fund', render: $.fn.dataTable.render.number( ',', '.', 0, 'Rp' )
+                        name: 'contribution',
+                        render: $.fn.dataTable.render.number(',', '.', 0, 'Rp')
                     },
                     {
                         data: 'action',

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\CommunityGroup;
 use App\Models\Market;
 use Illuminate\Support\Facades\Validator;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class CommunityGroupController extends Controller
 {

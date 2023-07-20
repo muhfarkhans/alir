@@ -7,38 +7,44 @@ use App\Models\CashLoan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
-use DataTables;
- 
+use Yajra\DataTables\DataTables;
+
 class MonthlyInstallmentController extends Controller
 {
     public function dataTablesMonthly(Request $request, $id)
     {
         if ($request->ajax()) {
             $data = MonthlyInstallment::with(['cash_loan'])->where('cash_loan_id', $id)->get();
-            return Datatables::of($data)
+            return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('action', function ($row) {
                     $actionBtn = '<button type="button" class="edit btn btn-success btn-sm" onclick="setFormData(' . $row->id . ')">Edit</button>';
                     return $actionBtn;
                 })
                 ->addColumn('monthlycontribution', function ($row) {
-                    if($row->cash_loan->loan_period == 12) {
+                    if ($row->cash_loan->loan_period == 12) {
                         $monthlyContibution = $row->cash_loan->contribution / 8;
-                    } elseif($row->cash_loan->loan_period == 24) {
+                    } elseif ($row->cash_loan->loan_period == 24) {
                         $monthlyContibution = $row->cash_loan->contribution / 20;
-                    } elseif($row->cash_loan->loan_period == 36) {
+                    } elseif ($row->cash_loan->loan_period == 36) {
                         $monthlyContibution = $row->cash_loan->contribution / 32;
                     }
                     return $monthlyContibution;
                 })
-                ->rawColumns(['action', 'monthlycontribution'])
+                ->addColumn('monthly_payment', function ($row) {
+                    return $row->total_loan / ($row->loan_period - 4);
+                })
+                ->addColumn('updated_at', function ($row) {
+                    return $row->updated_at->format('Y-m-d');
+                })
+                ->rawColumns(['action', 'monthlycontribution', 'monthly_payment', 'updated_at'])
                 ->make(true);
         }
     }
 
     public function find(Request $request)
     {
-        $monthly = MonthlyInstallment::where('id', $request->id)->first(); 
+        $monthly = MonthlyInstallment::where('id', $request->id)->first();
 
         return response()->json($monthly);
     }
@@ -56,7 +62,7 @@ class MonthlyInstallmentController extends Controller
         ])->validate();
 
         try {
-            DB::transaction(function () use($dataUpdate, $id) {
+            DB::transaction(function () use ($dataUpdate, $id) {
                 MonthlyInstallment::where('id', $id)->update($dataUpdate);
 
                 $getMonthly = MonthlyInstallment::where('id', $id)->first();

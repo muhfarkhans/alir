@@ -6,7 +6,7 @@ use App\Models\CommunityGroup;
 use Illuminate\Http\Request;
 use App\Models\CommunityMember;
 use Illuminate\Support\Facades\Validator;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class CommunityMemberController extends Controller
 {
@@ -42,31 +42,52 @@ class CommunityMemberController extends Controller
         ];
 
         if ($dataCreate['citizen_id'] == $dataCreate['gurantor_citizen_id']) {
+            if ($request->ajax()) {
+                return response()->json(['error' => true, 'message' => 'Data penerima tidak boleh sama dengan data penjamin']);
+            }
+
             return back()->withErrors([
                 'error' => 'Data penerima tidak boleh sama dengan data penjamin',
             ]);
         }
 
-        Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'citizen_id' => 'required',
             'gurantor_citizen_id' => 'required',
             'role' => 'required',
-        ])->validate();
+        ]);
+
+        if ($validator->fails()) {
+            if ($request->ajax()) {
+                return response()->json(['error' => true, 'message' => $validator->errors()]);
+            }
+
+            return back()->withErrors($validator)->withInput();
+        }
 
         $checkCitizen = CommunityMember::where('citizen_id', $dataCreate['citizen_id'])->orWhere('gurantor_citizen_id', $dataCreate['citizen_id'])->first();
         $checkGuarantor = CommunityMember::where('citizen_id', $dataCreate['gurantor_citizen_id'])->orWhere('gurantor_citizen_id', $dataCreate['gurantor_citizen_id'])->first();
 
         if ($checkCitizen || $checkGuarantor) {
+            if ($request->ajax()) {
+                return response()->json(['error' => true, 'message' => 'Data anggota sudah digunakan']);
+            }
+
             return back()->withErrors([
                 'error' => 'Data anggota sudah digunakan',
             ]);
         }
 
+        if ($request->ajax()) {
+            return CommunityMember::create($dataCreate);
+        }
+
         try {
-            CommunityMember::create($dataCreate);
+            $new = CommunityMember::create($dataCreate);
         } catch (\Throwable $th) {
             return redirect()->route('community-group.member.create', ['community_id' => $community_id]);
         }
+
         return redirect()->route('community-group.detail', ['id' => $community_id]);
     }
 
@@ -121,6 +142,7 @@ class CommunityMemberController extends Controller
         } catch (\Throwable $th) {
             return redirect()->route('community-group.member.edit', ['community_id' => $community_id, 'id' => $id]);
         }
+
         return redirect()->route('community-group.detail', ['id' => $community_id]);
     }
 

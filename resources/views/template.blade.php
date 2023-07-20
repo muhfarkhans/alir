@@ -12,6 +12,7 @@
     <link rel="shortcut icon" href="{{ asset('mazer/assets/images/logo/favicon.png') }}" type="image/png" />
     <link rel="stylesheet" href="{{ asset('mazer/assets/css/shared/iconly.css') }}" />
     @yield('css')
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 </head>
 
 <body>
@@ -75,12 +76,12 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item {{ request()->routeIs('citizen.*') ? 'active' : '' }}">
+                        {{-- <li class="sidebar-item {{ request()->routeIs('citizen.*') ? 'active' : '' }}">
                             <a href="{{ route('citizen.index') }}" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Anggota</span>
                             </a>
-                        </li>
+                        </li> --}}
 
                         <li class="sidebar-item {{ request()->routeIs('market.*') ? 'active' : '' }}">
                             <a href="{{ route('market.index') }}" class='sidebar-link'>
@@ -89,12 +90,12 @@
                             </a>
                         </li>
 
-                        <li class="sidebar-item {{ request()->routeIs('community-group.*') ? 'active' : '' }}">
+                        {{-- <li class="sidebar-item {{ request()->routeIs('community-group.*') ? 'active' : '' }}">
                             <a href="{{ route('community-group.index') }}" class='sidebar-link'>
                                 <i class="bi bi-grid-fill"></i>
                                 <span>Kelompok masyarakat</span>
                             </a>
-                        </li>
+                        </li> --}}
 
                         <li class="sidebar-item {{ request()->routeIs('cash-loan.*') ? 'active' : '' }}">
                             <a href="{{ route('cash-loan.index') }}" class='sidebar-link'>
@@ -126,13 +127,13 @@
                                     <div class="user-menu d-flex">
                                         <div class="user-name text-end me-3">
                                             <h6 class="mb-0 text-gray-600">
-                                                Guest
+                                                {{ Auth::user()->name }}
                                             </h6>
                                             <p class="mb-0 text-sm text-gray-600">Admin</p>
                                         </div>
                                         <div class="user-img d-flex align-items-center">
                                             <div class="avatar avatar-md">
-                                                <img src="../../assets/images/faces/1.jpg">
+                                                <img src="{{ asset('mazer/assets/images/faces/1.jpg') }}">
                                             </div>
                                         </div>
                                     </div>
@@ -140,12 +141,10 @@
                                 <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton"
                                     style="min-width: 11rem;">
                                     <li>
-                                        <h6 class="dropdown-header">Hello,
-                                            Guest
-                                        </h6>
+                                        <h6 class="dropdown-header">Hallo, {{ Auth::user()->name }}</h6>
                                     </li>
                                     <li>
-                                        <a class="dropdown-item" href="../profile.php">
+                                        <a class="dropdown-item" href="{{ route('profile') }}">
                                             <i class="icon-mid bi bi-person me-2"></i>
                                             My Profile
                                         </a>
@@ -178,6 +177,21 @@
     <script src="{{ asset('mazer/assets/js/app.js') }}"></script>
 
     @stack('js')
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+            var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl)
+            })
+        }, false);
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
 </body>
 
 </html>

@@ -25,8 +25,8 @@
                         <div class="alert alert-danger alert-dismissible show fade">{{ $message }}</div>
                     @enderror
 
-                    <h1 class="auth-title">Log in admin.</h1>
-                    <p class="auth-subtitle mb-5">Log in menggunakan email dan password anda.</p>
+                    <h1 class="auth-title" style="margin-top: -100px">Log in admin.</h1>
+                    <p class="auth-subtitle mb-3" style="font-size: 1em">Log in menggunakan email dan password anda.</p>
 
                     <form action="{{ route('authenticate') }}" method="post">
                         @csrf
@@ -44,7 +44,7 @@
                                 <i class="bi bi-shield-lock"></i>
                             </div>
                         </div>
-                        <button class="btn btn-primary btn-block btn-lg shadow-lg mt-5">Log in</button>
+                        <button class="btn btn-primary btn-block btn-lg shadow-lg mt-3">Log in</button>
                     </form>
                 </div>
             </div>

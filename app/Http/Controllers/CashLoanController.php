@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CashLoanMember;
 use App\Models\MonthlyInstallment;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -9,7 +10,7 @@ use App\Models\CashLoan;
 use App\Models\CommunityGroup;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class CashLoanController extends Controller
 {
@@ -21,7 +22,7 @@ class CashLoanController extends Controller
     public function dataTablesCashLoan(Request $request)
     {
         if ($request->ajax()) {
-            $data = CashLoan::with(['community_group'])->latest()->get();
+            $data = CashLoan::latest()->get();
             return Datatables::of($data)
                 ->addIndexColumn()
                 ->addColumn('loan-period', function ($row) {
@@ -47,44 +48,54 @@ class CashLoanController extends Controller
     public function store(Request $request)
     {
         $dataCreate = [
-            'community_group_id' => $request->input('community_group_id'),
-            'total_loan' => $request->input('total_loan'),
-            'contribution_percentage' => $request->input('contribution_percentage'),
-            'loan_period' => $request->input('loan_period'),
-            'acceptance_code' => $request->input('acceptance_code'),
+            'market_id' => $request->input('market_id'),
+            'code_dpm' => $request->input('code_dpm'),
+            'name' => $request->input('name'),
+            'address' => $request->input('address'),
             'disbursement_date' => $request->input('disbursement_date'),
-            'loan_status' => 'ongoing'
+            'due_date' => $request->input('due_date'),
+            'total_loan' => $request->input('total_loan'),
+            'loan_period' => $request->input('loan_period'),
+            'contribution' => ((int) $request->input('total_loan')) * (((int) $request->input('contribution_percentage')) / 100),
+            'contribution_percentage' => $request->input('contribution_percentage'),
+            'contribution_tolerance' => (((int) $request->input('total_loan')) * (((int) $request->input('contribution_percentage')) / 100) / (((int) $request->input('loan_period')) - 4) * 10),
+            'status' => 0,
         ];
-        // return $dataCreate;
 
         Validator::make($request->all(), [
-            'community_group_id' => 'required',
-            'total_loan' => 'required|numeric',
-            'contribution_percentage' => 'required|numeric',
-            'loan_period' => 'required',
-            'acceptance_code' => 'required',
+            'market_id' => 'required',
+            'code_dpm' => 'required',
+            'name' => 'required',
+            'address' => 'required',
             'disbursement_date' => 'required',
+            'due_date' => 'required',
+            'total_loan' => 'required',
+            'loan_period' => 'required',
+            'contribution_percentage' => 'required',
         ])->validate();
 
         $now = Carbon::now();
         $loanPeriod = $request->input('loan_period');
-        $loan = $request->input('total_loan');
-        $contributionPercentage = $request->input('contribution_percentage');
-        // $accCode = $request->input('acceptance_code');
-        // $date = $request->input('disbursement_date');
-        $contribution = $loan * $contributionPercentage / 100; 
-        $totalLoan = $loan + $contribution;
-
-        $dataCreate['contribution'] = $contribution;
-        $dataCreate['remaining_fund'] = $totalLoan;
-        //$dataCreate['acceptance_code'] = $accCode;
-        //$dataCreate['disbursement_date'] = $date;
-        $dataCreate['monthly_payment'] = $loan / ($loanPeriod - 4);
 
         try {
-            DB::transaction(function () use ($dataCreate, $loanPeriod, $now) {
+            DB::transaction(function () use ($dataCreate, $loanPeriod, $now, $request) {
                 $cashData = CashLoan::create($dataCreate);
                 $monthly = [];
+
+                foreach ($request->input('peminjam-nama') as $key => $value) {
+                    CashLoanMember::create([
+                        'cash_loan_id' => $cashData->id,
+                        'position' => $request->input('peminjam-jabatan')[$key],
+                        'name' => $request->input('peminjam-nama')[$key],
+                        'phone' => $request->input('peminjam-hp')[$key],
+                        'address' => $request->input('peminjam-alamat')[$key],
+                        'nik' => $request->input('peminjam-nik')[$key],
+                        'gurantor_name' => $request->input('penjamin-nama')[$key],
+                        'gurantor_nik' => $request->input('penjamin-nik')[$key],
+                        'gurantor_phone' => $request->input('penjamin-hp')[$key],
+                        'gurantor_address' => $request->input('penjamin-alamat')[$key],
+                    ]);
+                }
 
                 for ($i = 0; $i < $loanPeriod; $i++) {
                     if ($i < 4)
@@ -102,8 +113,8 @@ class CashLoanController extends Controller
                 MonthlyInstallment::insert($monthly);
             });
         } catch (\Throwable $th) {
-            //return $th;
-            return redirect()->route('cash-loan.create');
+            throw $th;
+            // return redirect()->route('cash-loan.create');
         }
         return redirect()->route('cash-loan.index');
     }
@@ -111,14 +122,12 @@ class CashLoanController extends Controller
     public function edit($id)
     {
         $cashLoan = CashLoan::find($id);
-        $communityGroup = CommunityGroup::latest()->get();
-        return view('cash-loan.edit', ['group' => $communityGroup, 'loan' => $cashLoan]);
+        return view('cash-loan.edit', ['loan' => $cashLoan]);
     }
 
     public function detail($id)
     {
-        $cashLoan = CashLoan::with(['community_group', 'monthly_installment'])->where('id', $id)->first();
-        //return $cashLoan;
+        $cashLoan = CashLoan::with(['monthly_installment'])->where('id', $id)->first();
         return view('cash-loan.detail', ['loan' => $cashLoan]);
     }
 
@@ -153,7 +162,7 @@ class CashLoanController extends Controller
     public function delete($id)
     {
         try {
-            DB::transaction(function () use($id) {
+            DB::transaction(function () use ($id) {
                 CashLoan::where('id', $id)->delete();
                 MonthlyInstallment::where('cash_loan_id', $id)->delete();
             });
@@ -163,7 +172,8 @@ class CashLoanController extends Controller
         return redirect()->route('cash-loan.index');
     }
 
-    public function paidOff ($id) {
+    public function paidOff($id)
+    {
         $dataUpdate = [
             'loan_status' => 'done',
         ];
@@ -174,5 +184,35 @@ class CashLoanController extends Controller
             return redirect()->route('cash-loan.detail', $id);
         }
         return redirect()->route('cash-loan.detail', $id);
+    }
+
+    public function checkMember(Request $request)
+    {
+        $checkApplicant = true;
+        $checkGurantor = true;
+
+        $applicant = CashLoanMember::with('cashloan')
+            ->where('nik', $request->nik)
+            ->orWhere('gurantor_nik', $request->nik)
+            ->get();
+        foreach ($applicant as $value) {
+            if ($value->status == 1)
+                $checkApplicant = false;
+        }
+
+        $gurantor = CashLoanMember::with('cashloan')
+            ->where('nik', $request->gurantor_nik)
+            ->orWhere('gurantor_nik', $request->gurantor_nik)
+            ->get();
+        foreach ($gurantor as $value) {
+            if ($value->status == 1)
+                $checkGurantor = false;
+        }
+
+        if ($checkApplicant && $checkGurantor) {
+            return 1;
+        }
+
+        return 0;
     }
 }

@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Market;
 use Illuminate\Support\Facades\Validator;
-use DataTables;
+use Yajra\DataTables\DataTables;
 
 class MarketController extends Controller
 {
@@ -91,5 +91,11 @@ class MarketController extends Controller
             return redirect()->route('market.index');
         }
         return redirect()->route('market.index');
+    }
+
+    public function getJson(Request $request)
+    {
+        $market = Market::latest()->get();
+        return response()->json($market);
     }
 }

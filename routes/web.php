@@ -9,6 +9,7 @@ use App\Http\Controllers\CommunityGroupController;
 use App\Http\Controllers\CommunityMemberController;
 use App\Http\Controllers\CashLoanController;
 use App\Http\Controllers\MonthlyInstallmentController;
+use App\Http\Controllers\ProfileController;
 
 Route::middleware(['auth:web'])->get('/', function () {
     return view('dashboard');
@@ -17,6 +18,9 @@ Route::middleware(['auth:web'])->get('/', function () {
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/authenticate', [AuthController::class, 'authenticate'])->name('authenticate');
 Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+
+Route::middleware(['auth'])->get('/profile', [ProfileController::class, 'index'])->name('profile');
+Route::middleware(['auth'])->post('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
 
 Route::middleware(['auth:web'])->name('user.')->prefix('user')->group(
     function () {
@@ -47,6 +51,7 @@ Route::middleware(['auth:web'])->name('market.')->prefix('market')->group(
     function () {
         Route::get('/', [MarketController::class, 'index'])->name('index');
         Route::get('/datatables', [MarketController::class, 'dataTablesMarket'])->name('datatables');
+        Route::get('/json', [MarketController::class, 'getJson'])->name('json');
         Route::get('/create', [MarketController::class, 'create'])->name('create');
         Route::post('/store', [MarketController::class, 'store'])->name('store');
         Route::get('/edit/{id}', [MarketController::class, 'edit'])->name('edit');
@@ -79,7 +84,7 @@ Route::middleware(['auth:web'])->name('community-group.')->prefix('community-gro
 );
 
 Route::middleware(['auth:web'])->name('cash-loan.')->prefix('cash-loan')->group(
-    function () { 
+    function () {
         Route::get('/', [CashLoanController::class, 'index'])->name('index');
         Route::get('/datatables', [CashLoanController::class, 'dataTablesCashLoan'])->name('datatables');
         Route::get('/datatables-monthly/{id}', [MonthlyInstallmentController::class, 'dataTablesMonthly'])->name('datatables.monthly');
@@ -92,5 +97,6 @@ Route::middleware(['auth:web'])->name('cash-loan.')->prefix('cash-loan')->group(
         Route::post('/update/{id}', [CashLoanController::class, 'update'])->name('update');
         Route::get('/delete/{id}', [CashLoanController::class, 'delete'])->name('delete');
         Route::get('/paid-off/{id}', [CashLoanController::class, 'paidOff'])->name('paid-off');
+        Route::post('/checkmember', [CashLoanController::class, 'checkMember'])->name('checkmember');
     }
 );

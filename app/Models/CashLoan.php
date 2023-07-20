@@ -5,27 +5,30 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class CashLoan extends Model 
+class CashLoan extends Model
 {
     use HasFactory;
 
     protected $table = 'cash_loans';
 
     protected $fillable = [
-        'community_group_id',
-        'acceptance_code',
+        'market_id',
+        'code_dpm',
+        'name',
+        'address',
         'disbursement_date',
-        'loan_period',
+        'due_date',
         'total_loan',
-        'contribution_percentage',
+        'loan_period',
         'contribution',
-        'monthly_payment',
-        'remaining_fund',
+        'contribution_percentage',
+        'contribution_tolerance',
+        'status',
     ];
 
-    public function community_group()
+    public function members()
     {
-        return $this->hasOne(CommunityGroup::class, 'id', 'community_group_id');
+        return $this->hasMany(CashLoanMember::class, 'cashloan_id', 'id');
     }
 
     public function monthly_installment()

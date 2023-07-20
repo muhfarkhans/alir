@@ -40,16 +40,8 @@
                                 <div class="form-body">
                                     <div class="mb-3 form-group">
                                         <label>Nama kelompok</label>
-                                        <select class="form-select" aria-label="Default select example" name="community_group_id">
-                                            <option selected disabled>-- Pilih nama kelompok --</option>
-                                            @foreach ($group as $group)
-                                                @if($loan->community_group_id == $group->id)
-                                                    <option value='{{ $group->id }}' selected>{{ $group->name }}</option>
-                                                @else
-                                                    <option value='{{ $group->id }}'>{{ $group->name }}</option>
-                                                @endif
-                                            @endforeach
-                                        </select>
+                                        <input type="text" class="form-control" name="name"
+                                            value="{{ $loan->name }}">
                                     </div>
 
                                     <div class="row">
@@ -58,15 +50,18 @@
                                                 <label>Jumlah pinjaman</label>
                                                 <div class="input-group mb-3">
                                                     <span class="input-group-text" id="basic-addon1">Rp</span>
-                                                    <input type="numeric" class="form-control" name="total_loan" value="{{ $loan->total_loan }}"
-                                                    placeholder="Masukkan jumlah pinjaman" aria-describedby="basic-addon1" required>
+                                                    <input type="numeric" class="form-control" name="total_loan"
+                                                        value="{{ $loan->total_loan }}"
+                                                        placeholder="Masukkan jumlah pinjaman"
+                                                        aria-describedby="basic-addon1" required>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-6">
                                             <div class="mb-3 form-group">
                                                 <label>Masa pinjaman</label>
-                                                <select class="form-select" aria-label="Default select example" name="loan_period">
+                                                <select class="form-select" aria-label="Default select example"
+                                                    name="loan_period">
                                                     @if ($loan->loan_period == 12)
                                                         <option selected disabled>-- Pilih masa pinjaman --</option>
                                                         <option value="12" selected>12 bulan</option>
