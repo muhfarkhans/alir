@@ -24,12 +24,12 @@
                     @if ($loan->status == 1)
                         <div
                             style="display: block; width: 100%; text-align: center; padding: 10px 0px; border-radius: 10px; background-color: teal">
-                            <h5 style="margin: 0; color: #fff">LUNAS</h5>
+                            <h5 style="margin: 0; color: #fff">SELESAI</h5>
                         </div>
                     @else
                         <div
                             style="display: block; width: 100%; text-align: center; padding: 10px 0px; border-radius: 10px; background-color: firebrick">
-                            <h5 style="margin: 0; color: #fff">TUNGGAK</h5>
+                            <h5 style="margin: 0; color: #fff">BERJALAN</h5>
                         </div>
                     @endif
                 </div>
