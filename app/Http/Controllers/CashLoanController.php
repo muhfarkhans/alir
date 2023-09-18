@@ -212,7 +212,7 @@ class CashLoanController extends Controller
             ->orWhere('gurantor_nik', $request->nik)
             ->get();
         foreach ($applicant as $value) {
-            if ($value->status == 1)
+            if ($value->cashloan->status == 0)
                 $checkApplicant = false;
         }
 
@@ -221,7 +221,7 @@ class CashLoanController extends Controller
             ->orWhere('gurantor_nik', $request->gurantor_nik)
             ->get();
         foreach ($gurantor as $value) {
-            if ($value->status == 1)
+            if ($value->cashloan->status == 0)
                 $checkGurantor = false;
         }
 
