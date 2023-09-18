@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\MonthlyInstallment;
 use App\Models\CashLoan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -64,18 +65,31 @@ class MonthlyInstallmentController extends Controller
         try {
             DB::transaction(function () use ($dataUpdate, $id) {
                 MonthlyInstallment::where('id', $id)->update($dataUpdate);
+                $monthly = MonthlyInstallment::where('id', $id)->first();
+                $cashLoan = CashLoan::with(['monthly_installment'])->where('id', $monthly->cash_loan_id)->first();
 
-                $getMonthly = MonthlyInstallment::where('id', $id)->first();
-                $getCashLoan = CashLoan::where('id', $getMonthly->cash_loan_id)->first();
-                $remainingFund = $getCashLoan->remaining_fund - ($dataUpdate['principal_payment'] + $dataUpdate['contribution_payment']);
-                $updateCashLoan = ['remaining_fund' => $remainingFund];
-                CashLoan::where('id', $getMonthly->cash_loan_id)->update($updateCashLoan);
+                $status = ['status' => 0];
+                $totalMustPay = $cashLoan->total_loan + $cashLoan->contribution;
+                $totalPayment = 0;
+                foreach ($cashLoan->monthly_installment as $item) {
+                    $totalPayment += ($item->principal_payment + $item->contribution_payment);
+                }
+
+                $now = Carbon::now();
+                $toleranceMonth = Carbon::parse($cashLoan->disbursement_date)->addMonths(10);
+                if ($now->lte($toleranceMonth)) {
+                    $totalMustPay = $cashLoan->total_loan + $cashLoan->contribution_tolerance;
+                }
+
+                if ($totalMustPay <= $totalPayment) {
+                    $status = ['status' => 1];
+                }
+                CashLoan::where('id', $monthly->cash_loan_id)->update($status);
             });
         } catch (\Throwable $th) {
-            //throw $th;
-            return false;
+            throw $th;
         }
 
-        return true;
+        return 1;
     }
 }

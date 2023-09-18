@@ -51,27 +51,28 @@
                                     </div>
                                     <div class="mb-3 form-group">
                                         <label for="">Nama Kelompok</label>
-                                        <input type="text" class="form-control" name="name">
+                                        <input type="text" class="form-control" name="name" required>
                                     </div>
                                     <div class="mb-3 form-group">
                                         <label for="">Kode DPM</label>
-                                        <input type="text" class="form-control" name="code_dpm">
+                                        <input type="text" class="form-control" name="code_dpm" required>
                                     </div>
                                     <div class="mb-3 form-group">
                                         <label for="">Alamat</label>
-                                        <textarea name="address" id="" cols="30" rows="3" class="form-control"></textarea>
+                                        <textarea name="address" id="" cols="30" rows="3" class="form-control" required></textarea>
                                     </div>
                                     <div class="row">
                                         <div class="col-6">
                                             <div class="mb-3 form-group">
                                                 <label>Tanggal Pencairan</label>
-                                                <input type="date" class="form-control" name="disbursement_date">
+                                                <input type="date" class="form-control" name="disbursement_date"
+                                                    required>
                                             </div>
                                         </div>
                                         <div class="col-6">
                                             <div class="mb-3 form-group">
                                                 <label>Tanggal Jatuh Tempo</label>
-                                                <input type="date" class="form-control" name="due_date">
+                                                <input type="date" class="form-control" name="due_date" required>
                                             </div>
                                         </div>
                                     </div>
@@ -91,7 +92,7 @@
                                             <div class="mb-3 form-group">
                                                 <label>Masa pinjaman</label>
                                                 <select class="form-select" aria-label="Default select example"
-                                                    name="loan_period">
+                                                    name="loan_period" required>
                                                     <option selected disabled>-- Pilih masa pinjaman --</option>
                                                     <option value="12">12 bulan</option>
                                                     <option value="24">24 bulan</option>
@@ -178,7 +179,13 @@
                         <div class="col-6">
                             <div class="mb-3 form-group">
                                 <label for="" class="form-label">Jabatan Peminjam</label>
-                                <input type="text" class="form-control" id="m-peminjam-jabatan">
+                                <select class="form-control" id="m-peminjam-jabatan">
+                                    <option value="">--pilih jabatan--</option>
+                                    <option value="ketua">Ketua</option>
+                                    <option value="sekertaris">Sekertaris</option>
+                                    <option value="bendahara">Bendahara</option>
+                                    <option value="anggota">Anggota</option>
+                                </select>
                             </div>
                         </div>
                         <div class="col-6">
@@ -249,7 +256,7 @@
                 dataRow.push(
                     `<input type="text" name="peminjam-nama[]" value="${data[0]}" hidden><input type="text" name="peminjam-nik[]" value="${data[1]}" hidden>${data[0]} (${data[1]})`
                 )
-                dataRow.push(`<input type="text" name="peminjam-jabatan[]" value="${data[2]}" hidden>${data[2]}`)
+                dataRow.push(`${data[2]} <input type="text" name="peminjam-jabatan[]" value="${data[2]}" hidden>`)
                 dataRow.push(`<input type="text" name="peminjam-hp[]" value="${data[3]}" hidden>${data[3]}`)
                 dataRow.push(`<input type="text" name="peminjam-alamat[]" value="${data[4]}" hidden>${data[4]}`)
                 dataRow.push(`<input type="text" name="penjamin-nama[]" value="${data[5]}" hidden>
@@ -367,8 +374,18 @@
             })
 
             $(document).on('click', '#submit-form', function() {
+                console.log("members", members);
                 if (members.length > 0) {
-                    $('#main-form').submit();
+                    let findKetua = false;
+                    members.forEach((item) => {
+                        if (item[1].split(" ")[0] == "ketua") findKetua = true;
+                    })
+
+                    if (findKetua) {
+                        $('#main-form').submit();
+                        return
+                    }
+                    alert("anggota ketua belum ditambahkan");
                 } else {
                     alert("data anggota belum ditambahkan");
                 }

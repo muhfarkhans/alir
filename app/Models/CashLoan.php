@@ -28,7 +28,7 @@ class CashLoan extends Model
 
     public function members()
     {
-        return $this->hasMany(CashLoanMember::class, 'cashloan_id', 'id');
+        return $this->hasMany(CashLoanMember::class, 'cash_loan_id', 'id');
     }
 
     public function monthly_installment()

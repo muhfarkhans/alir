@@ -30,8 +30,9 @@ class CashLoanController extends Controller
                     return $period;
                 })
                 ->addColumn('action', function ($row) {
-                    $actionBtn = '<a href="' . route('cash-loan.detail', ['id' => $row->id]) . '" class="edit btn btn-primary btn-sm">Detail</a> 
-                                  <a href="' . route('cash-loan.delete', ['id' => $row->id]) . '" class="delete btn btn-danger btn-sm">Delete</a>';
+                    $actionBtn = '<a href="' . route('cash-loan.edit', ['id' => $row->id]) . '" class="edit btn btn-success btn-sm">Edit</a> 
+                                    <a href="' . route('cash-loan.detail', ['id' => $row->id]) . '" class="edit btn btn-primary btn-sm">Detail</a> 
+                                    <a href="' . route('cash-loan.delete', ['id' => $row->id]) . '" class="delete btn btn-danger btn-sm">Delete</a>';
                     return $actionBtn;
                 })
                 ->rawColumns(['action', 'loan-period'])
@@ -41,8 +42,7 @@ class CashLoanController extends Controller
 
     public function create()
     {
-        $communityGroup = CommunityGroup::latest()->get();
-        return view('cash-loan.create', ['group' => $communityGroup]);
+        return view('cash-loan.create');
     }
 
     public function store(Request $request)
@@ -121,8 +121,8 @@ class CashLoanController extends Controller
 
     public function edit($id)
     {
-        $cashLoan = CashLoan::find($id);
-        return view('cash-loan.edit', ['loan' => $cashLoan]);
+        $cashLoan = CashLoan::with('members')->where('id', $id)->first();
+        return view('cash-loan.edit', ['loan' => $cashLoan, 'jsonMembers' => json_encode($cashLoan->members)]);
     }
 
     public function detail($id)
@@ -134,28 +134,44 @@ class CashLoanController extends Controller
     public function update(Request $request, $id)
     {
         $dataUpdate = [
-            'community_group_id' => $request->input('community_group_id'),
-            'total_loan' => $request->input('total_loan'),
-            'loan_period' => $request->input('loan_period'),
+            'market_id' => $request->input('market_id'),
+            'code_dpm' => $request->input('code_dpm'),
+            'name' => $request->input('name'),
+            'address' => $request->input('address'),
         ];
-        // return $dataCreate;
 
         Validator::make($request->all(), [
-            'community_group_id' => 'required',
-            'total_loan' => 'required|numeric',
-            'loan_period' => 'required',
+            'market_id' => 'required',
+            'code_dpm' => 'required',
+            'name' => 'required',
+            'address' => 'required',
         ])->validate();
 
-        $contribution = $request->input('total_loan') * 0.12;
-        $dataUpdate['contribution'] = $contribution;
-        $totalLoan = $request->input('total_loan') + $contribution;
-        $dataUpdate['remaining_fund'] = $totalLoan;
-        $dataUpdate['monthly_payment'] = $totalLoan / $request->input('loan_period');
         try {
-            CashLoan::where('id', $id)->update($dataUpdate);
+            DB::transaction(function () use ($id, $dataUpdate, $request) {
+                CashLoan::where('id', $id)->update($dataUpdate);
+                CashLoanMember::where('cash_loan_id', $id)->delete();
+
+                foreach ($request->input('peminjam-nama') as $key => $value) {
+                    CashLoanMember::create([
+                        'cash_loan_id' => $id,
+                        'position' => $request->input('peminjam-jabatan')[$key],
+                        'name' => $request->input('peminjam-nama')[$key],
+                        'phone' => $request->input('peminjam-hp')[$key],
+                        'address' => $request->input('peminjam-alamat')[$key],
+                        'nik' => $request->input('peminjam-nik')[$key],
+                        'gurantor_name' => $request->input('penjamin-nama')[$key],
+                        'gurantor_nik' => $request->input('penjamin-nik')[$key],
+                        'gurantor_phone' => $request->input('penjamin-hp')[$key],
+                        'gurantor_address' => $request->input('penjamin-alamat')[$key],
+                    ]);
+                }
+            });
         } catch (\Throwable $th) {
-            return redirect()->route('cash-loan.edit');
+            throw $th;
+            // return redirect()->route('cash-loan.create');
         }
+
         return redirect()->route('cash-loan.index');
     }
 

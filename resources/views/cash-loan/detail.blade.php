@@ -21,6 +21,17 @@
                 </div>
                 <div class="card-body">
                     <p>{{ $loan->address }}</p>
+                    @if ($loan->status == 1)
+                        <div
+                            style="display: block; width: 100%; text-align: center; padding: 10px 0px; border-radius: 10px; background-color: teal">
+                            <h5 style="margin: 0; color: #fff">LUNAS</h5>
+                        </div>
+                    @else
+                        <div
+                            style="display: block; width: 100%; text-align: center; padding: 10px 0px; border-radius: 10px; background-color: firebrick">
+                            <h5 style="margin: 0; color: #fff">TUNGGAK</h5>
+                        </div>
+                    @endif
                 </div>
             </div>
             <div class="card mb-3">
@@ -31,13 +42,13 @@
                         </div>
 
                         <div class="d-flex justify-content-end mb-3">
-                            <div class="mb-n3">
+                            {{-- <div class="mb-n3">
                                 <a href="{{ route('cash-loan.paid-off', $loan->id) }}">
                                     <button class="btn btn-danger">
                                         Pinjaman Lunas
                                     </button>
                                 </a>
-                            </div>
+                            </div> --}}
                         </div>
                     </div>
                 </div>
@@ -296,9 +307,7 @@
 
         $("#monthlyForm").on("submit", function(e) {
             e.preventDefault()
-
             const formData = new FormData(e.target);
-
             $.ajax({
                 url: "{{ route('cash-loan.monthly.update', '') }}" + "/" + formData.get('id'),
                 type: "POST",
@@ -307,7 +316,7 @@
                 contentType: false,
                 success: function(response) {
                     $('#inlineForm').modal('hide');
-                    $('.datatables').DataTable().ajax.reload();
+                    window.location.reload();
                 },
                 error: function(err) {
                     console.error(err);
