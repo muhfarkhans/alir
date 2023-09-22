@@ -310,7 +310,7 @@
             const formData = new FormData(e.target);
             $.ajax({
                 url: "{{ route('cash-loan.monthly.update', '') }}" + "/" + formData.get('id'),
-                type: "POST",
+                type: "POST", 
                 data: formData,
                 processData: false,
                 contentType: false,

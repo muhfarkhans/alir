@@ -31,6 +31,12 @@
 
                         <div class="d-flex justify-content-end mb-3">
                             <div class="mb-n3">
+                                <a href="{{ route('export-excel') }}">
+                                    <button class="btn btn-success">
+                                        Export to Excel
+                                    </button>
+                                </a>
+
                                 <a href="{{ route('cash-loan.create') }}">
                                     <button class="btn btn-primary">
                                         Tambah data

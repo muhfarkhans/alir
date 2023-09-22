@@ -24,6 +24,7 @@ class CashLoan extends Model
         'contribution_percentage',
         'contribution_tolerance',
         'status',
+        'remaining_loan'
     ];
 
     public function members()

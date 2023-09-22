@@ -10,10 +10,11 @@ use App\Http\Controllers\CommunityMemberController;
 use App\Http\Controllers\CashLoanController;
 use App\Http\Controllers\MonthlyInstallmentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\DashboardController;
 
-Route::middleware(['auth:web'])->get('/', function () {
-    return view('dashboard');
-})->name('dashboard');
+
+Route::middleware(['auth:web'])->get('/', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::get('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/authenticate', [AuthController::class, 'authenticate'])->name('authenticate');
@@ -100,3 +101,7 @@ Route::middleware(['auth:web'])->name('cash-loan.')->prefix('cash-loan')->group(
         Route::post('/checkmember', [CashLoanController::class, 'checkMember'])->name('checkmember');
     }
 );
+
+Route::get('/export-excel', [ReportController::class, 'exportExcel'])->middleware(['auth:web'])->name('export-excel');
+
+Route::get('/test-report', [ReportController::class, 'testReport'])->middleware(['auth:web']);

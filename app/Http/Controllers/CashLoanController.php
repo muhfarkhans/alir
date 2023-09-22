@@ -47,6 +47,7 @@ class CashLoanController extends Controller
 
     public function store(Request $request)
     {
+        $contribution = ((int) $request->input('total_loan')) * (((int) $request->input('contribution_percentage')) / 100);
         $dataCreate = [
             'market_id' => $request->input('market_id'),
             'code_dpm' => $request->input('code_dpm'),
@@ -56,10 +57,11 @@ class CashLoanController extends Controller
             'due_date' => $request->input('due_date'),
             'total_loan' => $request->input('total_loan'),
             'loan_period' => $request->input('loan_period'),
-            'contribution' => ((int) $request->input('total_loan')) * (((int) $request->input('contribution_percentage')) / 100),
+            'contribution' => $contribution,
             'contribution_percentage' => $request->input('contribution_percentage'),
             'contribution_tolerance' => (((int) $request->input('total_loan')) * (((int) $request->input('contribution_percentage')) / 100) / (((int) $request->input('loan_period')) - 4) * 10),
             'status' => 0,
+            'remaining_loan' => $request->input('total_loan') + $contribution
         ];
 
         Validator::make($request->all(), [
@@ -76,9 +78,14 @@ class CashLoanController extends Controller
 
         $now = Carbon::now();
         $loanPeriod = $request->input('loan_period');
+        $disbursementDate = $request->input('disbursement_date');
+        //return $disbursementDate;
+        $disbursementDateConvert = Carbon::createFromFormat('Y-m-d', $disbursementDate);
+        //return $disbursementDateConvert;
+        //return $loanPeriod;
 
         try {
-            DB::transaction(function () use ($dataCreate, $loanPeriod, $now, $request) {
+            DB::transaction(function () use ($dataCreate, $loanPeriod, $now, $request, $disbursementDateConvert) {
                 $cashData = CashLoan::create($dataCreate);
                 $monthly = [];
 
@@ -97,15 +104,14 @@ class CashLoanController extends Controller
                     ]);
                 }
 
-                for ($i = 0; $i < $loanPeriod; $i++) {
-                    if ($i < 4)
-                        continue;
-
+                $installmentDate = $disbursementDateConvert->copy()->addMonths(4);
+                $totalInstallment = $loanPeriod - 4;
+                for ($i = 0; $i < $totalInstallment; $i++) {
                     $monthly[] = [
                         'cash_loan_id' => $cashData->id,
                         'principal_payment' => 0,
                         'contribution_payment' => 0,
-                        'installment_date' => Carbon::now()->addMonths($i)->startOfMonth(),
+                        'installment_date' => $installmentDate->copy()->addMonths($i)->startOfMonth(),
                         'created_at' => $now,
                         'updated_at' => $now
                     ];
@@ -129,7 +135,7 @@ class CashLoanController extends Controller
     {
         $cashLoan = CashLoan::with(['monthly_installment'])->where('id', $id)->first();
         return view('cash-loan.detail', ['loan' => $cashLoan]);
-    }
+    } 
 
     public function update(Request $request, $id)
     {
@@ -191,7 +197,7 @@ class CashLoanController extends Controller
     public function paidOff($id)
     {
         $dataUpdate = [
-            'loan_status' => 'done',
+            'status' => 'done',
         ];
 
         try {

@@ -16,7 +16,7 @@
                                     Pinjaman
                                 </h6>
                                 <h6 class="font-extrabold mb-0">
-                                    {{ 100 }}
+                                    {{ $data['total_cash_loan'] }}
                                 </h6>
                             </div>
                         </div>
@@ -37,7 +37,7 @@
                                     Anggota
                                 </h6>
                                 <h6 class="font-extrabold mb-0">
-                                    {{ 100 }}
+                                    {{ $data['total_cash_loan_member'] }}
                                 </h6>
                             </div>
                         </div>
@@ -58,7 +58,7 @@
                                     Dipinjamkan
                                 </h6>
                                 <h6 class="font-extrabold mb-0">
-                                    Rp. {{ 100 }}
+                                    Rp. {{ $data['total_nominal_loan'] }}
                                 </h6>
                             </div>
                         </div>
@@ -79,7 +79,7 @@
                                     Pengguna
                                 </h6>
                                 <h6 class="font-extrabold mb-0">
-                                    {{ 100 }}
+                                    {{ $data['total_user'] }}
                                 </h6>
                             </div>
                         </div>

@@ -63,17 +63,20 @@ class MonthlyInstallmentController extends Controller
         ])->validate();
 
         try {
-            DB::transaction(function () use ($dataUpdate, $id) {
+            DB::transaction(function () use ($request, $dataUpdate, $id) {
                 MonthlyInstallment::where('id', $id)->update($dataUpdate);
                 $monthly = MonthlyInstallment::where('id', $id)->first();
                 $cashLoan = CashLoan::with(['monthly_installment'])->where('id', $monthly->cash_loan_id)->first();
 
-                $status = ['status' => 0];
+                $updateLoan = [
+                    'status' => 0,
+                    'remaining_loan' => $cashLoan->remaining_loan - ($request->input('principal_payment') + $request->input('contribution_payment'))
+                ];
                 $totalMustPay = $cashLoan->total_loan + $cashLoan->contribution;
                 $totalPayment = 0;
-                foreach ($cashLoan->monthly_installment as $item) {
-                    $totalPayment += ($item->principal_payment + $item->contribution_payment);
-                }
+                // foreach ($cashLoan->monthly_installment as $item) {
+                //     $totalPayment += ($item->principal_payment + $item->contribution_payment);
+                // }
 
                 $now = Carbon::now();
                 $toleranceMonth = Carbon::parse($cashLoan->disbursement_date)->addMonths(10);
@@ -81,10 +84,16 @@ class MonthlyInstallmentController extends Controller
                     $totalMustPay = $cashLoan->total_loan + $cashLoan->contribution_tolerance;
                 }
 
-                if ($totalMustPay <= $totalPayment) {
-                    $status = ['status' => 1];
+                // if ($totalMustPay <= $totalPayment) {
+                //     $updateLoan = ['status' => 1];
+                // }
+                if ($updateLoan['remaining_loan'] <= 0) {
+                    $updateLoan = [
+                        'status' => 1,
+                        'remaining_loan' => $cashLoan->remaining_loan - ($request->input('principal_payment') + $request->input('contribution_payment'))
+                    ];
                 }
-                CashLoan::where('id', $monthly->cash_loan_id)->update($status);
+                CashLoan::where('id', $monthly->cash_loan_id)->update($updateLoan);
             });
         } catch (\Throwable $th) {
             throw $th;
